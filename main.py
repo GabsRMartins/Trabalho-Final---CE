@@ -4,6 +4,7 @@ import numpy as np
 from src.utils.graph_utils import plotar_evolucao
 
 from src.entities.alimento import AlimentoItem
+from src.entities.treino import FichaTreino
 
 from src.entities.individuo import Individuo
 from src.service.simulation import simular_evolucao
@@ -72,15 +73,22 @@ if __name__ == "__main__":
     # Criar indivíduo para simulação
     individuo = criar_exemplo_individuo()
     
+    # Criar ficha de treino (escolha entre "ABC", "ABCD" ou "PPL")
+    ficha_treino = FichaTreino(tipo_divisao="ABC")
+    
     print("=== Estado Inicial ===")
     print(f"Peso: {individuo.peso:.1f} kg")
     print(f"IMC: {individuo.calcular_imc():.1f}")
     print(f"Taxa de Gordura: {individuo.taxa_gordura:.1f}%")
     print(f"Gasto Calórico Total: {individuo.calcular_gasto_calorico_total():.0f} kcal")
+    print(f"\nGasto Calórico com Treino (semanal): {ficha_treino.calcular_gasto_semanal(individuo.peso):.0f} kcal")
+    print(f"Gasto Calórico Médio Diário (treino): {ficha_treino.calcular_gasto_diario_medio(individuo.peso):.0f} kcal")
+    
+    print("\n" + str(ficha_treino))
     print("\nIniciando simulação de 36 semanas...")
     
     # Simular evolução por 36 semanas
-    simular_evolucao(individuo, alimentos, 36)
+    simular_evolucao(individuo, alimentos, ficha_treino, 36)
     
     print("\n=== Estado Final ===")
     print(f"Peso: {individuo.peso:.1f} kg")
