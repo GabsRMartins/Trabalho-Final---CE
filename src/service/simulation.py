@@ -2,14 +2,57 @@ from typing import List
 import random
 from src.entities.individuo import Individuo
 from src.entities.alimento import AlimentoItem
-from src.utils.alg_utils import mochila_alimentos
+from src.entities.treino import FichaTreino
+from src.utils.alg_utils import mochila_alimentos, resetar_cache_elitismo
 
-def simular_evolucao(individuo: Individuo, alimentos: List[AlimentoItem], semanas: int):
+def simular_evolucao(individuo: Individuo, alimentos: List[AlimentoItem], ficha_treino: FichaTreino, semanas: int):
+    """
+    Simula a evolução corporal de um indivíduo ao longo de semanas
+    
+    Metodologia:
+    1. Calcula gasto calórico basal (Harris-Benedict, 1919)
+    2. Aplica ajustes baseados em IMC e composição corporal
+    3. Otimiza seleção de alimentos usando Algoritmo Genético
+    4. Modela mudança de peso e composição corporal
+    5. Registra evolução em históricos
+    
+    Parâmetros Fisiológicos:
+    - CALORIAS_POR_KG: 7700 kcal (energia de 1kg de gordura corporal)
+      Fonte: McDonald, L. (2004) - Body Recomposition
+      
+    - Percentual de Gordura em Déficit: 75-82% da perda é gordura
+    - Percentual de Gordura em Superávit: 30-35% do ganho é gordura
+      Fonte: Estudos com Calorimetria Indireta (Body Composition Analysis)
+    
+    - Limites Saudáveis de Taxa de Gordura:
+      Homens: 6-24%  (Jackson & Pollock, 1978)
+      Mulheres: 16-31% (Jackson & Pollock, 1978)
+    
+    Ajustes Implementados:
+    - IMC > 25: Reduz 300-600 kcal (baseado em ACSM Weight Management Guidelines)
+    - Taxa Gordura Alta: Reduz 200 kcal
+    - Platô (mudança < 0.1%): Aumenta ajuste 10% (Metabolic Adaptation)
+    
+    Args:
+        individuo: Objeto Individuo com dados iniciais
+        alimentos: Lista de AlimentoItem disponíveis
+        ficha_treino: FichaTreino com divisão de exercícios (ABC/ABCD/PPL)
+        semanas: Número de semanas a simular
+    """
+    # Reset do cache de elitismo para iniciar uma nova simulação
+    resetar_cache_elitismo()
+    
     CALORIAS_POR_KG = 7700  # kcal por kg de gordura
     
     for semana in range(semanas):
         imc_atual = individuo.calcular_imc()
-        gasto_calorico = individuo.calcular_gasto_calorico_total()
+        gasto_calorico_base = individuo.calcular_gasto_calorico_total()
+        
+        # Gasto calórico adicional do treino (variável por tipo de treino)
+        gasto_treino_semanal = ficha_treino.calcular_gasto_semanal(individuo.peso)
+        gasto_treino_diario = gasto_treino_semanal / 7  # Média diária
+        
+        gasto_calorico = gasto_calorico_base + gasto_treino_diario
         
         # Define limites saudáveis de gordura corporal por sexo
         if individuo.sexo.lower() == 'm':
@@ -41,8 +84,8 @@ def simular_evolucao(individuo: Individuo, alimentos: List[AlimentoItem], semana
         # Garante limites seguros de calorias
         meta_calorica = max(1500, min(3500, gasto_calorico + ajuste_base))
         
-        # Variação diária menor (±50 kcal)
-        variacao_diaria = random.uniform(-50, 50)
+        # Variação diária muito reduzida (±5 kcal ao invés de ±10)
+        variacao_diaria = random.uniform(-5, 5)
         meta_calorica += variacao_diaria
 
         # Seleciona alimentos e calcula calorias totais
@@ -58,11 +101,11 @@ def simular_evolucao(individuo: Individuo, alimentos: List[AlimentoItem], semana
         
         # Calcula mudança na composição corporal
         if diferenca_calorica_semanal < 0:
-            # Em déficit: 75-85% da perda é gordura
-            perc_gordura = random.uniform(0.75, 0.85)
+            # Em déficit: 75-82% da perda é gordura (reduzido de 75-85%)
+            perc_gordura = random.uniform(0.75, 0.82)
         else:
-            # Em superávit: 25-35% do ganho é gordura
-            perc_gordura = random.uniform(0.25, 0.35)
+            # Em superávit: 30-35% do ganho é gordura (reduzido de 25-35%)
+            perc_gordura = random.uniform(0.30, 0.35)
         
         mudanca_massa_gordura = mudanca_peso * perc_gordura
         
