@@ -20,7 +20,7 @@ Substitui "valores" por "coeficientes" ou "índices", que são termos mais adequ
 
 "Os coeficientes de MET (Metabolic Equivalent of Task) foram adotados com base em:" "A parametrização dos índices MET fundamenta-se nas seguintes referências:
     """
-    # Treinamento de força/resistência (valores conservadores)
+    # Treinamento de força/resistência (margem de segurança aplicada)
     SUPERIOR = 3.0          # Musculação peito/costas/ombro (5-6 METs) → reduzido para estabilidade
     INFERIOR = 4.0          # Musculação pernas (7-9 METs) → reduzido para estabilidade
     PERNA_INTENSA = 4.5     # Agachamento pesado (9-10 METs) → reduzido para estabilidade
