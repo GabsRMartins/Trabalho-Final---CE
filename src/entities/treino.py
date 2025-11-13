@@ -13,7 +13,12 @@ class TipoTreino(Enum):
     Cálculo: kcal = (MET * 3.5 * peso_kg * duracao_minutos) / 200
     Baseado em: 1 MET = 1 kcal/kg/hora = 3.5 mL O2/kg/min
     
-    NOTA: valores de estabilidade e simulação, reduzidos.  (usa ~50% do potencial máximo)
+    NOTA:Aqui estão algumas opções de reescrita, organizadas pelo nível de formalidade e contexto:
+
+1. Mais Técnica e Precisa (Ideal para Relatórios/Artigos)
+Substitui "valores" por "coeficientes" ou "índices", que são termos mais adequados para constantes matemáticas/científicas.
+
+"Os coeficientes de MET (Metabolic Equivalent of Task) foram adotados com base em:" "A parametrização dos índices MET fundamenta-se nas seguintes referências:
     """
     # Treinamento de força/resistência (valores conservadores)
     SUPERIOR = 3.0          # Musculação peito/costas/ombro (5-6 METs) → reduzido para estabilidade
