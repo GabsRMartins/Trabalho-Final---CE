@@ -25,7 +25,7 @@ Substitui "valores" por "coeficientes" ou "índices", que são termos mais adequ
     INFERIOR = 4.0          # Musculação pernas (7-9 METs) → reduzido para estabilidade
     PERNA_INTENSA = 4.5     # Agachamento pesado (9-10 METs) → reduzido para estabilidade
     
-    # Cardio aeróbico (valores conservadores)
+    # Cardio aeróbico (margem de segurança aplicada)
     CARDIO_LEVE = 2.5       # Caminhada leve (3-5 METs) → reduzido para estabilidade
     CARDIO_MODERADO = 3.75  # Corrida moderada (7-8 METs) → reduzido para estabilidade
     CARDIO_INTENSO = 5.0    # Corrida rápida (10-12 METs) → reduzido para estabilidade
