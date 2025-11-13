@@ -1,13 +1,16 @@
-# Trabalho-Final---CE
+🧬 Simulador de Evolução Corporal
+Projeto Final de Computação Evolutiva (CE)
 
-## 💊 Simulador de Evolução Corporal com Interface Gráfica
+Este projeto implementa um simulador interativo de evolução corporal, aplicando algoritmos bio-inspirados para auxiliar na tomada de decisões de saúde e fitness.
 
-Projeto final de **Computação Evolutiva** que implementa um simulador de evolução corporal usando:
-- ✅ **Algoritmo Genético** para otimização de dieta
-- ✅ **Cálculos Fisiológicos** baseados em fórmulas científicas
-- ✅ **Interface Gráfica Flet** para usuários não-técnicos
-- ✅ **Fichas de Treino Variáveis** (ABC, ABCD, PPL)
+✨ Principais Funcionalidades
+🤖 Otimização via Algoritmo Genético: Geração e evolução automática de dietas otimizadas para os objetivos do usuário.
 
+📊 Modelagem Fisiológica: Cálculos baseados em fórmulas científicas validadas (TMB, Gasto Calórico, etc.).
+
+💻 Interface Gráfica Moderna: Desenvolvida com Flet (Python), garantindo usabilidade para usuários.
+
+🏋️‍♀️ Estruturas de Treino Adaptáveis: Suporte para múltiplas divisões de treino (ABC, ABCD, PPL - Push/Pull/Legs).
 ### 🚀 Como Executar
 
 #### Opção 1: Interface Gráfica (Recomendado)
