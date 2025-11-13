@@ -30,7 +30,7 @@ Substitui "valores" por "coeficientes" ou "índices", que são termos mais adequ
     CARDIO_MODERADO = 3.75  # Corrida moderada (7-8 METs) → reduzido para estabilidade
     CARDIO_INTENSO = 5.0    # Corrida rápida (10-12 METs) → reduzido para estabilidade
     
-    # Treinos mistos/funcionais (valores conservadores)
+    # Treinos mistos/funcionais (margem de segurança aplicada)
     FUNCIONAL = 4.25        # HIIT/Treino funcional (8-9 METs) → reduzido para estabilidade
     YOGA = 1.5              # Yoga com asanas (2.5-3.3 METs) → reduzido para estabilidade
     
