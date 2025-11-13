@@ -3,7 +3,7 @@ from typing import List
 from dataclasses import dataclass
 
 class TipoTreino(Enum):
-    """Tipos de treino com gastos calóricos baseados em METs (Metabolic Equivalent of Task)
+    """Estimativa de gasto calórico baseada no padrão MET (Metabolic Equivalent of Task).
     
     Fontes:
     - 2024 Compendium of Physical Activities (Ainsworth et al., 2024)
