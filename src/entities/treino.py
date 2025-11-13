@@ -39,7 +39,7 @@ Substitui "valores" por "coeficientes" ou "índices", que são termos mais adequ
 
 @dataclass
 class Exercicio:
-    """Representa um exercício individual"""
+    """Representação de um indivíduo ideal"""
     nome: str
     tipo_treino: TipoTreino
     series: int = 3
