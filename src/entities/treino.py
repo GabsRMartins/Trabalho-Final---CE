@@ -13,7 +13,7 @@ class TipoTreino(Enum):
     Cálculo: kcal = (MET * 3.5 * peso_kg * duracao_minutos) / 200
     Baseado em: 1 MET = 1 kcal/kg/hora = 3.5 mL O2/kg/min
     
-    NOTA: Valores reduzidos para estabilidade da simulação (usa ~50% do potencial máximo)
+    NOTA: valores de estabilidade e simulação, reduzidos.  (usa ~50% do potencial máximo)
     """
     # Treinamento de força/resistência (valores conservadores)
     SUPERIOR = 3.0          # Musculação peito/costas/ombro (5-6 METs) → reduzido para estabilidade
