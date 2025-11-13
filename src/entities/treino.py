@@ -44,7 +44,7 @@ class Exercicio:
         return f"{self.nome} ({self.series}x{self.repeticoes})"
 
 class FichaTreino:
-    """Gerencia a ficha de treino de um indivíduo com divisão ABC (3 dias) ou ABCD (4 dias)
+    """Gestão de planos de treino com suporte a múltiplas periodicidades: divisão ABC (3 dias) e ABCD (4 dias)
     
     Os valores de METs (Metabolic Equivalent of Task) são baseados em:
     - 2024 Compendium of Physical Activities
