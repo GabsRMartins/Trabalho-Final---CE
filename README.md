@@ -23,7 +23,7 @@ python executar_interface.py
 python main.py
 ```
 
-### 📊 Características Principais
+### Características Principais
 
 1. **Interface Intuitiva com Flet**
    - Coleta de dados pessoais (peso, altura, idade, etc)
