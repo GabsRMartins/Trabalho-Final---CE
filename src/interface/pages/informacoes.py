@@ -47,7 +47,7 @@ class PaginaInformacoes:
                 "title": "AVISO IMPORTANTE",
                 "text": "Esta é uma simulação educacional para fins acadêmicos. Não deve ser usada para prescrição nutricional ou médica.",
                 "list_items": [],
-                "color": ft.Colors.RED_700  # Cor de destaque para o aviso
+                "color": ft.Colors.RED_700  
             },
             {
                 "icon": ft.Icons.DESCRIPTION_OUTLINED,
@@ -62,43 +62,32 @@ class PaginaInformacoes:
         ]
 
     def _create_info_card(self, section: dict) -> ft.Card:
-        """
-        Cria um widget de Card individual para uma seção de informação.
-        
-        Args:
-            section: Um dicionário contendo 'icon', 'title', 'text', 'list_items' e 'color'.
-
-        Returns:
-            Um ft.Card pronto para ser exibido.
-        """
-        
-        # --- Constrói a lista de itens (se houver) ---
+   
         list_controls = []
-        if section.get("list_items"): # Verifica se a lista existe e não está vazia
+        if section.get("list_items"):
             for item in section["list_items"]:
                 list_controls.append(
                     ft.Row(
                         controls=[
                             ft.Icon(
-                                # Usa ícones diferentes para itens de lista
+                                
                                 ft.Icons.CHECK_CIRCLE_OUTLINE if section["title"] != "DOCUMENTAÇÃO" 
                                 else ft.Icons.ARTICLE_OUTLINED,
                                 color=ft.Colors.GREEN_700 if section["title"] != "DOCUMENTAÇÃO" else ft.Colors.GREY_700,
                                 size=18
                             ),
-                            ft.Text(item, size=14, color=ft.Colors.BLACK87, expand=True), # expand=True garante a quebra de linha
+                            ft.Text(item, size=14, color=ft.Colors.BLACK87, expand=True), 
                         ],
                         spacing=10
                     )
                 )
 
-        # --- Constrói o Card ---
         return ft.Card(
-            elevation=2.0,  # Sombra leve
+            elevation=2.0,  
             content=ft.Container(
                 content=ft.Column(
                     controls=[
-                        # --- Linha do Título ---
+                       
                         ft.Row(
                             controls=[
                                 ft.Icon(section["icon"], color=section["color"], size=24),
@@ -115,7 +104,7 @@ class PaginaInformacoes:
                         ),
                         ft.Divider(height=1, color=ft.Colors.GREY_300),
                         
-                        # --- Container do Conteúdo ---
+                      
                         ft.Container(
                             content=ft.Column(
                                 controls=[
@@ -123,9 +112,9 @@ class PaginaInformacoes:
                                         section["text"],
                                         size=15,
                                         color=ft.Colors.BLACK87,
-                                        italic=(section["title"] == "AVISO IMPORTANTE") # Coloca aviso em itálico
+                                        italic=(section["title"] == "AVISO IMPORTANTE") 
                                     ),
-                                    # Adiciona a coluna de lista de itens (se houver)
+                               
                                     ft.Column(list_controls, spacing=5) if list_controls else ft.Container()
                                 ],
                                 spacing=10
@@ -133,70 +122,55 @@ class PaginaInformacoes:
                             padding=ft.padding.only(left=10, right=10, top=10, bottom=15)
                         )
                     ],
-                    spacing=5 # Espaçamento interno do Card
+                    spacing=5 
                 ),
-                padding=10, # Padding geral do Card
+                padding=10, 
                 border_radius=ft.border_radius.all(8)
             )
         )
 
     def _build_content_view(self) -> ft.Container:
-        """
-        Constrói a visão principal da aba, iterando sobre os dados
-        e criando os cards.
-        """
-        # 3. CONSTRUÇÃO DA VIEW
-        # A lógica de UI apenas itera sobre os dados e chama o construtor de Card.
+      
         info_cards = [self._create_info_card(section) for section in self.info_sections]
         
         return ft.Container(
-            # Define uma cor de fundo sutil para a aba
+           
             bgcolor=ft.Colors.GREY_100,
             padding=ft.padding.symmetric(horizontal=10, vertical=15),
             alignment=ft.alignment.top_center,
             expand=True,
             content=ft.Column(
                 controls=info_cards,
-                scroll=ft.ScrollMode.AUTO, # Habilita a rolagem
-                spacing=15, # Espaço entre os cards
-                horizontal_alignment=ft.CrossAxisAlignment.STRETCH # Faz os cards ocuparem a largura
+                scroll=ft.ScrollMode.AUTO, 
+                spacing=15, 
+                horizontal_alignment=ft.CrossAxisAlignment.STRETCH 
             )
         )
 
     def build(self) -> ft.Tab:
-        """
-        Ponto de entrada principal para construir o widget da aba.
-        """
-        # 2. PONTO DE ENTRADA (Build)
-        # O método build agora é limpo e apenas monta a Tab.
-        # O conteúdo real é delegado para _build_content_view.
+        
         return ft.Tab(
             text="Informações",
-            icon=ft.Icons.INFO_OUTLINE, # Ícone na própria aba
+            icon=ft.Icons.INFO_OUTLINE, 
             content=self._build_content_view()
         )
 
-# --- Código de Exemplo para Testar a Página ---
 def main(page: ft.Page):
-    """
-    Função principal para executar e testar esta página de forma independente.
-    """
+  
     page.title = "Teste da Página de Informações"
     page.vertical_alignment = ft.MainAxisAlignment.START
     page.window_width = 500
     page.window_height = 800
 
-    # Cria a instância da nossa página
+ 
     pagina_info = PaginaInformacoes()
 
-    # Adiciona a um controle de Tabs para visualização
+    
     tabs_control = ft.Tabs(
         selected_index=0,
         expand=1,
         tabs=[
-            pagina_info.build()  # Chama o método build da nossa classe
-            # Você poderia adicionar outras tabs aqui para teste
-            # ft.Tab(text="Outra Aba", icon=ft.icons.HOME, content=ft.Text("Conteúdo da outra aba"))
+            pagina_info.build()  
         ]
     )
     
