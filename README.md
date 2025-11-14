@@ -482,7 +482,8 @@ Algoritmo Genético
 ✅ Validação: Convergência em ~30 gerações 
 ✅ Implementação: src/utils/alg_utils.py - IndividuoGenetico (classe)
 
-Diretrizes de Saúde ✅ ACSM: Haskell, W.L., et al. (2007). Circulation, 116(9): 1081-1093 ✅ WHO: Physical Activity Guidelines & BMI Classification ✅ Recomendações de Calorias: Mínima (1500 kcal) e Máxima (3500 kcal) usadas como referência.
+Diretrizes de Saúde 
+✅ ACSM: Haskell, W.L., et al. (2007). Circulation, 116(9): 1081-1093 ✅ WHO: Physical Activity Guidelines & BMI Classification ✅ Recomendações de Calorias: Mínima (1500 kcal) e Máxima (3500 kcal) usadas como referência.
 ## Dados Utilizados na Simulação (Exemplo Padrão)
 
 ### Indivíduo Padrão
