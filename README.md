@@ -463,7 +463,8 @@ Gasto Energético com Atividade (METs)
 ✅ Fórmula: kcal = (MET × 3.5 × peso × duração) / 200 
 ✅ Implementação: src/entities/treino.py - TipoTreino (enum)
 
-Índice de Massa Corporal (IMC) ✅ Fórmula: IMC = peso(kg) / altura(m)² ✅ Fonte: WHO (1995). "Physical Status: The Use and Interpretation of Anthropometry" ✅ Padrão Global: Amplamente aceito pela OMS ✅ Implementação: src/entities/individuo.py - calcular_imc()
+Índice de Massa Corporal (IMC) 
+✅ Fórmula: IMC = peso(kg) / altura(m)² ✅ Fonte: WHO (1995). "Physical Status: The Use and Interpretation of Anthropometry" ✅ Padrão Global: Amplamente aceito pela OMS ✅ Implementação: src/entities/individuo.py - calcular_imc()
 
 Composição Corporal ✅ Taxa de Gordura Saudável: Jackson & Pollock (1978). (Homens: 6-24%; Mulheres: 16-31%) ✅ Conversão Peso↔Gordura: 7700 kcal/kg (Fonte: Estudos com calorimetria indireta; Ref: Lyle McDonald's Body Recomposition) ✅ Percentual de Mudança (Déficit): 75-82% gordura, 18-25% massa magra ✅ Percentual de Mudança (Superávit): 30-35% gordura, 65-70% massa magra ✅ Implementação: src/service/simulation.py
 
