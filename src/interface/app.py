@@ -27,67 +27,62 @@ class AppSimulador:
             callback_validacao=self._on_dados_validados,
             callback_avancar_aba=self._avancar_aba
         )
-        self.pagina_treino = PaginaFichaTreino(callback_confirmacao=self._on_treino_confirmado)
+        self.pagina_treino = PaginaFichaTreino(
+            callback_confirmacao=self._on_treino_confirmado,
+            callback_avancar_aba=self._avancar_aba
+        )
         self.pagina_resultados = PaginaResultados()
         self.pagina_info = PaginaInformacoes()
         
-        # Referência para o Tabs (será definida em build())
         self.tabs = None
         
     def build(self):
-        """Constrói a interface principal"""
         
-        # Construir todas as abas
         tab_dados = self.pagina_dados.build()
         tab_treino = self.pagina_treino.build()
         tab_resultados = self.pagina_resultados.build()
         tab_info = self.pagina_info.build()
         
-        # Criar o componente Tabs e armazenar referência
+        
         self.tabs = ft.Tabs(
             selected_index=0,
             tabs=[tab_dados, tab_treino, tab_resultados, tab_info],
             expand=True,
         )
         
-        # Container principal
+        header = ft.Container(
+            content=ft.Text("Simulador de Evolução Corporal", size=20, weight="bold", text_align=ft.TextAlign.CENTER),
+            bgcolor=ft.Colors.BLUE_700,
+            padding=15,
+        )
+        
         return ft.Column(
             controls=[
-                ft.AppBar(
-                    title=ft.Text("Simulador de Evolucao Corporal", size=20, weight="bold"),
-                    center_title=True,
-                    bgcolor=ft.Colors.BLUE_700,
-                ),
+                header,
                 self.tabs,
             ],
             expand=True,
         )
     
     def _on_dados_validados(self, individuo, semanas):
-        """Callback chamado quando dados são validados"""
-        # Preparar página de resultados com os dados validados
         self.pagina_resultados.set_parametros_simulacao(
             individuo=individuo,
             alimentos=self.alimentos,
-            ficha_treino=None,  # Será definido quando a ficha for confirmada
+            ficha_treino=None, 
             semanas=int(semanas) if semanas else 36
         )
         self.page.update()
     
     def _avancar_aba(self, indice_aba: int):
-        """Avança para a aba especificada"""
         if self.tabs:
             self.tabs.selected_index = indice_aba
             self.page.update()
     
     def _on_treino_confirmado(self, ficha_treino):
-        """Callback chamado quando ficha de treino é confirmada"""
-        # Atualizar página de resultados com a ficha de treino
         individuo = self.pagina_dados.get_individuo()
         semanas = self.pagina_dados.get_semanas()
         
         if individuo:
-            # Atualizar peso na página de treino para cálculos corretos
             self.pagina_treino.set_peso_individuo(individuo.peso)
             
             self.pagina_resultados.set_parametros_simulacao(
@@ -99,7 +94,6 @@ class AppSimulador:
         self.page.update()
     
     def _criar_cardapio(self) -> List[AlimentoItem]:
-        """Cria a lista padrão de alimentos"""
         return [
             AlimentoItem("Frango Grelhado", 165, 100),
             AlimentoItem("Ovo", 155, 100),

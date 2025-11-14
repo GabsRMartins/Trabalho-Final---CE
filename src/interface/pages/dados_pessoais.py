@@ -5,53 +5,51 @@ Módulo para aba de Dados Pessoais
 import flet as ft
 from src.entities.individuo import Individuo
 from src.interface.util import ValidadorDados, FormularioHelper
+from src.interface.components.alert import Alert
 
 
 class PaginaDadosPessoais:
-    """Página para entrada de dados pessoais do usuário"""
-    
+   
     def __init__(self, callback_validacao, callback_avancar_aba=None):
         self.callback_validacao = callback_validacao
         self.callback_avancar_aba = callback_avancar_aba
         self.individuo = None
         self.dados_validados = None
-        
+
     def build(self):
-        """Constrói a aba de Dados Pessoais"""
-        
-        # Campos de entrada
+        input_width = 320
         self.txt_peso = ft.TextField(
             label="Peso (kg)",
             hint_text="Ex: 75",
             keyboard_type=ft.KeyboardType.NUMBER,
+            width=input_width,
         )
-        
         self.txt_altura = ft.TextField(
             label="Altura (m)",
             hint_text="Ex: 1.75",
             keyboard_type=ft.KeyboardType.NUMBER,
+            width=input_width,
         )
-        
         self.txt_idade = ft.TextField(
             label="Idade (anos)",
             hint_text="Ex: 30",
             keyboard_type=ft.KeyboardType.NUMBER,
+            width=input_width,
         )
-        
         self.dropdown_sexo = ft.Dropdown(
             label="Sexo",
             options=[
                 ft.dropdown.Option("M", "Masculino"),
                 ft.dropdown.Option("F", "Feminino"),
             ],
+            width=input_width,
         )
-        
         self.txt_taxa_gordura = ft.TextField(
             label="Taxa de Gordura Corporal (%)",
             hint_text="Ex: 25",
             keyboard_type=ft.KeyboardType.NUMBER,
+            width=input_width,
         )
-        
         self.dropdown_atividade = ft.Dropdown(
             label="Nível de Atividade",
             options=[
@@ -62,63 +60,67 @@ class PaginaDadosPessoais:
                 ft.dropdown.Option("1.9", "Extremamente ativo (2x/dia)"),
             ],
             value="1.55",
+            width=input_width,
         )
-        
         self.txt_semanas = ft.TextField(
             label="Número de Semanas a Simular",
             hint_text="Ex: 36",
             keyboard_type=ft.KeyboardType.NUMBER,
             value="36",
+            width=input_width,
         )
-        
-        self.txt_status = ft.Text(
-            value="",
-            size=14,
-            color=ft.Colors.ORANGE,
-        )
-        
+
+        # Placeholder para alertas (será atualizado dinamicamente)
+        self.alert_placeholder = ft.Column(controls=[], tight=True)
+
         btn_validar = ft.ElevatedButton(
             text="Validar Dados",
             on_click=self._validar_dados,
             bgcolor=ft.Colors.GREEN,
             color="white",
+            width=input_width,
         )
-        
+
+        # Layout centralizado com scroll
+        form_content = ft.Column(
+            scroll=ft.ScrollMode.AUTO,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Container(height=20),  # espaçador topo
+                ft.Text("Insira Seus Dados Pessoais", size=22, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Container(height=10),
+                self.alert_placeholder,
+                ft.Container(
+                    content=ft.Column([
+                        self.txt_peso,
+                        self.txt_altura,
+                        self.txt_idade,
+                        self.dropdown_sexo,
+                        self.txt_taxa_gordura,
+                        ft.Divider(),
+                        ft.Text("Atividade Basal", size=14, weight="bold", text_align=ft.TextAlign.CENTER),
+                        self.dropdown_atividade,
+                        ft.Divider(),
+                        ft.Text("Configuração da Simulação", size=14, weight="bold", text_align=ft.TextAlign.CENTER),
+                        self.txt_semanas,
+                        ft.Container(height=10),
+                        btn_validar,
+                        ft.Container(height=20),  # espaçador rodapé
+                    ], spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                    padding=ft.padding.symmetric(horizontal=20, vertical=20),
+                ),
+            ],
+        )
+
         return ft.Tab(
             text="Dados Pessoais",
-            content=ft.Column(
-                scroll=ft.ScrollMode.AUTO,
-                controls=[
-                    ft.Container(
-                        content=ft.Column(
-                            controls=[
-                                ft.Text("Insira Seus Dados Pessoais", size=18, weight="bold"),
-                                self.txt_peso,
-                                self.txt_altura,
-                                self.txt_idade,
-                                self.dropdown_sexo,
-                                self.txt_taxa_gordura,
-                                ft.Divider(),
-                                ft.Text("Atividade Basal", size=14, weight="bold"),
-                                self.dropdown_atividade,
-                                ft.Divider(),
-                                ft.Text("Configuracao da Simulacao", size=14, weight="bold"),
-                                self.txt_semanas,
-                                btn_validar,
-                                self.txt_status,
-                            ],
-                            spacing=15,
-                        ),
-                        padding=20,
-                    ),
-                ],
-            ),
+            content=form_content,
         )
-    
+
     def _validar_dados(self, e):
-        """Valida os dados inseridos usando o validador centralizado"""
+        """Valida os dados inseridos usando o validador centralizado e exibe alertas"""
         try:
-            # Usar validador centralizado para validar todos os dados
             valido, mensagem_erro, dados_validados = ValidadorDados.validar_todos_dados(
                 peso_str=self.txt_peso.value,
                 altura_str=self.txt_altura.value,
@@ -127,16 +129,17 @@ class PaginaDadosPessoais:
                 taxa_gordura_str=self.txt_taxa_gordura.value,
                 semanas_str=self.txt_semanas.value,
             )
-            
+
             if not valido:
-                self.txt_status.value = f"Erro na validacao:\n{mensagem_erro}"
-                self.txt_status.color = ft.Colors.RED
+                alerta = Alert(f"Erro na validação: {mensagem_erro}", alert_type="error", on_close=self._close_alert)
+                self.alert_placeholder.controls = [alerta]
+                self.alert_placeholder.update()
                 return
-            
-            # Armazenar dados validados
+
+           
             self.dados_validados = dados_validados
+
             
-            # Criar indivíduo com dados validados
             self.individuo = Individuo(
                 peso=dados_validados['peso'],
                 altura=dados_validados['altura'],
@@ -146,40 +149,46 @@ class PaginaDadosPessoais:
                 gasto_treino=0,
                 taxa_gordura=dados_validados['taxa_gordura'],
             )
+
             
-            # Calcular informações
             imc = self.individuo.calcular_imc()
             tmb = self.individuo.calcular_tmb()
             tdee = self.individuo.calcular_gasto_calorico_total()
-            
-            self.txt_status.value = f"""Dados Validados com Sucesso!
 
-Calculos:
-• IMC: {imc:.1f}
-• TMB: {tmb:.0f} kcal/dia
-• TDEE: {tdee:.0f} kcal/dia
-• Massa Gorda: {(dados_validados['peso'] * dados_validados['taxa_gordura'] / 100):.1f} kg
-• Massa Magra: {(dados_validados['peso'] * (100 - dados_validados['taxa_gordura']) / 100):.1f} kg
+            mensagem = (
+                f"Dados Validados com Sucesso!\n\n"
+                f"IMC: {imc:.1f} — TMB: {tmb:.0f} kcal/dia — TDEE: {tdee:.0f} kcal/dia\n"
+                f"Massa Gorda: {(dados_validados['peso'] * dados_validados['taxa_gordura'] / 100):.1f} kg — "
+                f"Massa Magra: {(dados_validados['peso'] * (100 - dados_validados['taxa_gordura']) / 100):.1f} kg"
+            )
 
-Proximo: Selecione uma Ficha de Treino"""
-            self.txt_status.color = ft.Colors.GREEN
+            alerta = Alert(mensagem, alert_type="success", on_close=self._close_alert, auto_dismiss_seconds=6)
+            self.alert_placeholder.controls = [alerta]
+            self.alert_placeholder.update()
+
             
-            # Chamar callback com dados validados
             if self.callback_validacao:
                 self.callback_validacao(self.individuo, dados_validados['semanas'])
+
             
-            # Avançar automaticamente para próxima aba (Ficha de Treino)
             if self.callback_avancar_aba:
-                self.callback_avancar_aba(1)  # Índice 1 = Ficha de Treino
-            
+                self.callback_avancar_aba(1) 
+
         except Exception as ex:
-            self.txt_status.value = f"Erro inesperado: {str(ex)}"
-            self.txt_status.color = ft.Colors.RED
-    
+            alerta = Alert(f"Erro inesperado: {str(ex)}", alert_type="error", on_close=self._close_alert)
+            self.alert_placeholder.controls = [alerta]
+            self.alert_placeholder.update()
+
+    def _close_alert(self, e):
+        self.alert_placeholder.controls = []
+        try:
+            self.alert_placeholder.update()
+        except:
+            pass
+
     def get_individuo(self):
-        """Retorna o indivíduo validado"""
         return self.individuo
-    
+
     def get_semanas(self):
         """Retorna o número de semanas"""
         try:
