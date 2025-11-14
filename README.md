@@ -321,22 +321,35 @@ IMC = peso_kg / (altura_m)²
 
 ---
 
-## 11. RESUMO DA CONFIABILIDADE
+## RESUMO DA CONFIABILIDADE
 
-### ✅ Bem Fundamentado
-- ✓ Cálculo de TMB (Harris-Benedict, 1919)
-- ✓ METs de exercícios (Compendium 2024)
-- ✓ Percentual de gordura saudável (Jackson & Pollock 1978)
-- ✓ IMC e classificação (WHO 1995)
-- ✓ Energia por kg de gordura (7700 kcal/kg)
+✅ Bem Fundamentado
 
-### ⚠️ Simplificado (não implementado)
-- Variação em metabolismo basal com mudança de peso
-- Adaptação metabólica prolongada
-- Ciclos hormonais
-- Efeito térmico da alimentação (TEF)
-- Individualiação por genética
+Cálculo de TMB (Harris-Benedict, 1919)
 
+METs de exercícios (Compendium 2024)
+
+Percentual de gordura saudável (Jackson & Pollock 1978)
+
+IMC e classificação (WHO 1995)
+
+Energia por kg de gordura (7700 kcal/kg)
+
+⚠️ Simplificações (Fatores Não Implementados)
+
+Variação em metabolismo basal com mudança de peso
+
+Adaptação metabólica prolongada
+
+Ciclos hormonais
+
+Efeito térmico da alimentação (TEF)
+
+Individualização por genética (correção de digitação)
+
+📊 Nível de Confiança Global: 8/10
+
+Modelo bem fundamentado cientificamente, com simplificações educacionais apropriadas.
 ### 📊 Nível de Confiança Global
 **8/10** - Modelo bem fundamentado cientificamente, com simplificações educacionais apropriadas
 
