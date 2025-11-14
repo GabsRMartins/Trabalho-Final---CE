@@ -63,8 +63,10 @@ class FichaTreino:
     
     def __init__(self, tipo_divisao: str = "ABC"):
         """
-        Inicializa a ficha de treino.
-        tipo_divisao: "ABC" (3 dias), "ABCD" (4 dias) ou "PPL" (Push/Pull/Legs)
+        tipo_divisao (str): Define a metodologia de divisão dos treinos.
+        - "ABC": Frequência de 3 dias.
+        - "ABCD": Frequência de 4 dias.
+        - "PPL": Push/Pull/Legs (Empurrar/Puxar/Pernas).
         """
         self.tipo_divisao = tipo_divisao
         self.treinos: dict = {}
