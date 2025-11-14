@@ -42,7 +42,7 @@ def simular_evolucao(individuo: Individuo, alimentos: List[AlimentoItem], ficha_
     # Reset do cache de elitismo para iniciar uma nova simulação
     resetar_cache_elitismo()
     
-    CALORIAS_POR_KG = 7700  # kcal por kg de gordura
+    CALORIAS_POR_KG = 7700  
     
     for semana in range(semanas):
         imc_atual = individuo.calcular_imc()

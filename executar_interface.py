@@ -45,8 +45,6 @@ def run_application():
     Configura e inicia a aplicação Flet.
     """
     print("🚀 Iniciando Interface de Simulação de Evolução Corporal...")
-    print("📊 Interface baseada em Flet (Flutter for Python)")
-    
     try:
         # Inicia a aplicação Flet passando a função 'main' importada
         ft.app(target=main_app)

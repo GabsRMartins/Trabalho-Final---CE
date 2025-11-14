@@ -4,232 +4,221 @@ Módulo para aba de Resultados
 
 import flet as ft
 import copy
-import io
-import base64
-import matplotlib.pyplot as plt
-import matplotlib
-from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 from src.service.simulation import simular_evolucao
 from src.entities.individuo import Individuo
-
-# Usar backend Agg para evitar problemas com display
-matplotlib.use('Agg')
+from src.interface.util.graficos import criar_graficos_evolucao
 
 
 class PaginaResultados:
-    """Página para execução da simulação e exibição de resultados"""
-    
+
     def __init__(self):
         self.individuo_original = None
         self.alimentos = None
         self.ficha_treino = None
         self.semanas = 36
+        self.btn_executar = None
         
     def build(self):
-        """Constrói a aba de Resultados"""
+        
+        self.alert_placeholder = ft.Column(controls=[], tight=True)
         
         self.txt_status = ft.Text(
             value="Aguardando simulação...",
-            size=14,
+            size=13,
             color=ft.Colors.ORANGE,
         )
         
         self.progress_bar = ft.ProgressBar(visible=False)
         
-        self.container_resultados = ft.Column(spacing=10)
-        self.container_graficos = ft.Column(spacing=10, scroll=ft.ScrollMode.AUTO)
+        self.container_resumo = ft.Row(spacing=15, wrap=True, alignment=ft.MainAxisAlignment.CENTER)
+        self.container_graficos = ft.Column(spacing=10, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         
-        btn_executar = ft.ElevatedButton(
-            text="🚀 Executar Simulação",
+        # Container wrapper para o resumo
+        self.resumo_wrapper = ft.Container(
+            content=ft.Column([
+                ft.Text("Resumo da Evolução", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Container(height=10),
+                self.container_resumo,
+            ], spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            padding=20,
+            visible=False,
+        )
+        
+        # Container wrapper para os gráficos
+        self.graficos_wrapper = ft.Container(
+            content=ft.Column([
+                ft.Text("Dados de Evolução", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Container(height=10),
+                self.container_graficos,
+            ], spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            padding=20,
+            visible=False,
+        )
+        
+        self.btn_executar = ft.ElevatedButton(
+            text="Executar Simulação",
             on_click=self._executar_simulacao,
             bgcolor=ft.Colors.RED_700,
             color="white",
+            width=320,
+        )
+        
+        # Layout centralizado com scroll
+        self.content_column = ft.Column(
+            scroll=ft.ScrollMode.AUTO,
+            alignment=ft.MainAxisAlignment.START,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Container(height=20),
+                ft.Text("Simulação de Evolução Corporal", size=24, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Container(height=10),
+                self.alert_placeholder,
+                self.txt_status,
+                ft.Container(height=10),
+                self.btn_executar,
+                self.progress_bar,
+                ft.Container(height=20),
+                self.resumo_wrapper,
+                self.graficos_wrapper,
+                ft.Container(height=20),
+            ],
         )
         
         return ft.Tab(
-            text="📊 Resultados",
-            content=ft.Column(
-                scroll=ft.ScrollMode.AUTO,
-                controls=[
-                    ft.Container(
-                        content=ft.Column(
-                            controls=[
-                                ft.Text("Simulação de Evolução Corporal", size=18, weight="bold"),
-                                self.txt_status,
-                                btn_executar,
-                                self.progress_bar,
-                                ft.Divider(),
-                                ft.Text("Resumo Final", size=16, weight="bold"),
-                                self.container_resultados,
-                                ft.Divider(),
-                                ft.Text("Dados de Evolução", size=16, weight="bold"),
-                                self.container_graficos,
-                            ],
-                            spacing=15,
-                        ),
-                        padding=20,
-                    ),
-                ],
-            ),
+            text="Resultados",
+            content=self.content_column,
         )
     
     def set_parametros_simulacao(self, individuo, alimentos, ficha_treino, semanas):
-        """Define os parâmetros para a simulação"""
         self.individuo_original = individuo
         self.alimentos = alimentos
         self.ficha_treino = ficha_treino
         self.semanas = semanas
     
     def _executar_simulacao(self, e):
-        """Executa a simulação"""
         if not self.individuo_original or not self.ficha_treino:
-            self.txt_status.value = "❌ Complete os dados e escolha uma ficha de treino!"
-            self.txt_status.color = ft.Colors.RED
+            from src.interface.components.alert import Alert
+            alerta = Alert("Complete os dados e escolha uma ficha de treino!", alert_type="error", on_close=self._close_alert)
+            self.alert_placeholder.controls = [alerta]
+            self.alert_placeholder.update()
             return
         
         try:
-            # Executar simulação
-            self.txt_status.value = "⏳ Simulando... Aguarde..."
+            # Desabilitar botão
+            self.btn_executar.disabled = True
+            self.btn_executar.opacity = 0.5
+            self.btn_executar.update()
+            
+            self.txt_status.value = "Simulando... Aguarde..."
             self.txt_status.color = ft.Colors.ORANGE
             self.progress_bar.visible = True
+            self.txt_status.update()
+            self.progress_bar.update()
             
-            # Clonar indivíduo para não modificar original
             individuo_sim = copy.deepcopy(self.individuo_original)
-            
-            # Simulação
             simular_evolucao(individuo_sim, self.alimentos, self.ficha_treino, self.semanas)
             
-            # Exibir resultados
             self._exibir_resultados(individuo_sim)
             
-            self.txt_status.value = "✅ Simulação Concluída com Sucesso!"
+            self.txt_status.value = "Simulação Concluída com Sucesso!"
             self.txt_status.color = ft.Colors.GREEN
             self.progress_bar.visible = False
+            self.txt_status.update()
+            self.progress_bar.update()
+            
+            try:
+                self.btn_executar.page.update()
+            except:
+                pass
             
         except Exception as ex:
-            self.txt_status.value = f"❌ Erro: {str(ex)}"
-            self.txt_status.color = ft.Colors.RED
+            from src.interface.components.alert import Alert
+            import traceback
+            alerta = Alert(f"Erro: {str(ex)}", alert_type="error", on_close=self._close_alert)
+            self.alert_placeholder.controls = [alerta]
+            self.alert_placeholder.update()
             self.progress_bar.visible = False
+            self.progress_bar.update()
+            print(traceback.format_exc())
+        
+        finally:
+            # Reabilitar botão
+            self.btn_executar.disabled = False
+            self.btn_executar.opacity = 1.0
+            self.btn_executar.update()
+    
+    def _close_alert(self, e):
+        """Callback para fechar o alerta"""
+        self.alert_placeholder.controls = []
+        try:
+            self.alert_placeholder.update()
+        except:
+            pass
     
     def _exibir_resultados(self, individuo_sim: Individuo):
         """Exibe os resultados da simulação"""
         
-        self.container_resultados.controls.clear()
+        self.container_resumo.controls.clear()
         self.container_graficos.controls.clear()
         
         mudanca_peso = individuo_sim.peso - self.individuo_original.peso
         mudanca_imc = individuo_sim.calcular_imc() - self.individuo_original.calcular_imc()
         mudanca_gordura = individuo_sim.taxa_gordura - self.individuo_original.taxa_gordura
         
-        resumo = f"""━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📊 RESUMO DA EVOLUÇÃO
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🏋️ PESO
-   Inicial: {self.individuo_original.peso:.1f} kg
-   Final: {individuo_sim.peso:.1f} kg
-   Variação: {mudanca_peso:+.1f} kg
-
-📐 IMC
-   Inicial: {self.individuo_original.calcular_imc():.1f}
-   Final: {individuo_sim.calcular_imc():.1f}
-   Variação: {mudanca_imc:+.1f}
-
-🔴 TAXA DE GORDURA
-   Inicial: {self.individuo_original.taxa_gordura:.1f}%
-   Final: {individuo_sim.taxa_gordura:.1f}%
-   Variação: {mudanca_gordura:+.1f}%
-
-💪 MASSA MAGRA
-   Inicial: {(self.individuo_original.peso * (100 - self.individuo_original.taxa_gordura) / 100):.1f} kg
-   Final: {(individuo_sim.peso * (100 - individuo_sim.taxa_gordura) / 100):.1f} kg
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
+        massa_magra_inicial = self.individuo_original.peso * (100 - self.individuo_original.taxa_gordura) / 100
+        massa_magra_final = individuo_sim.peso * (100 - individuo_sim.taxa_gordura) / 100
+        mudanca_massa_magra = massa_magra_final - massa_magra_inicial
         
-        self.container_resultados.controls.append(
-            ft.Text(value=resumo, size=11, font_family="monospace", color=ft.Colors.GREY_800)
+        # Cards de resumo
+        card_peso = self._criar_card_resumo(
+            titulo="Peso",
+            valor_inicial=f"{self.individuo_original.peso:.1f} kg",
+            valor_final=f"{individuo_sim.peso:.1f} kg",
+            variacao=mudanca_peso,
+            unidade="kg",
+            cor=ft.Colors.BLUE_GREY_700
         )
         
-        try:
-            self._criar_graficos_visualizacao(individuo_sim)
-        except Exception as ex:
-            self.container_graficos.controls.append(
-                ft.Text(
-                    value=f"⚠️ Erro: {str(ex)}",
-                    color=ft.Colors.ORANGE,
-                )
-            )
-    
-    def _criar_graficos_visualizacao(self, individuo_sim: Individuo):
-        """Cria visualização dos gráficos com matplotlib"""
+        card_imc = self._criar_card_resumo(
+            titulo="IMC",
+            valor_inicial=f"{self.individuo_original.calcular_imc():.1f}",
+            valor_final=f"{individuo_sim.calcular_imc():.1f}",
+            variacao=mudanca_imc,
+            unidade="",
+            cor=ft.Colors.AMBER_600
+        )
         
+        card_gordura = self._criar_card_resumo(
+            titulo="Taxa de Gordura",
+            valor_inicial=f"{self.individuo_original.taxa_gordura:.1f}%",
+            valor_final=f"{individuo_sim.taxa_gordura:.1f}%",
+            variacao=mudanca_gordura,
+            unidade="%",
+            cor=ft.Colors.PINK_400
+        )
+        
+        card_massa_magra = self._criar_card_resumo(
+            titulo="Massa Magra",
+            valor_inicial=f"{massa_magra_inicial:.1f} kg",
+            valor_final=f"{massa_magra_final:.1f} kg",
+            variacao=mudanca_massa_magra,
+            unidade="kg",
+            cor=ft.Colors.DEEP_PURPLE_500
+        )
+        
+        self.container_resumo.controls.extend([card_peso, card_imc, card_gordura, card_massa_magra])
+        
+        self.resumo_wrapper.visible = True
+        self.resumo_wrapper.update()
+
         try:
-            # Criar figura com 3 subgráficos
-            fig, axes = plt.subplots(3, 1, figsize=(10, 12))
-            fig.suptitle("Monitoramento de Evolucao Corporal", fontsize=16, fontweight='bold')
+            image_base64 = criar_graficos_evolucao(self.individuo_original, individuo_sim)
             
-            semanas = range(len(individuo_sim.historico_imc))
-            
-            # ===== Gráfico 1: IMC =====
-            ax1 = axes[0]
-            ax1.plot(semanas, individuo_sim.historico_imc, color='#1f77b4', linewidth=2.5, marker='o', label='IMC')
-            ax1.axhline(y=18.5, color='#2ca02c', linestyle='--', linewidth=1.5, label='IMC Minimo')
-            ax1.axhline(y=25, color='#d62728', linestyle='--', linewidth=1.5, label='IMC Maximo')
-            ax1.set_ylabel('IMC', fontweight='bold')
-            ax1.set_title('Evolucao do IMC', fontsize=12, fontweight='bold')
-            ax1.legend(loc='upper right')
-            ax1.grid(True, linestyle='--', alpha=0.6)
-            ax1.set_facecolor('#fafafa')
-            
-            # ===== Gráfico 2: Taxa de Gordura =====
-            ax2 = axes[1]
-            ax2.plot(semanas, individuo_sim.historico_gordura, color='#e377c2', linewidth=2.5, marker='s', label='Taxa de Gordura')
-            
-            # Linhas de referência por sexo
-            if self.individuo_original.sexo.lower() == 'm':
-                ax2.axhline(y=6, color='#2ca02c', linestyle='--', linewidth=1.5, label='Minimo (H)')
-                ax2.axhline(y=24, color='#d62728', linestyle='--', linewidth=1.5, label='Maximo (H)')
-            else:
-                ax2.axhline(y=16, color='#2ca02c', linestyle='--', linewidth=1.5, label='Minimo (M)')
-                ax2.axhline(y=31, color='#d62728', linestyle='--', linewidth=1.5, label='Maximo (M)')
-            
-            ax2.set_ylabel('Taxa de Gordura (%)', fontweight='bold')
-            ax2.set_title('Evolucao da Taxa de Gordura Corporal', fontsize=12, fontweight='bold')
-            ax2.legend(loc='upper right')
-            ax2.grid(True, linestyle='--', alpha=0.6)
-            ax2.set_facecolor('#fafafa')
-            
-            # ===== Gráfico 3: Calorias =====
-            ax3 = axes[2]
-            ax3.plot(semanas, individuo_sim.historico_calorias, color='#2ca02c', linewidth=2.5, marker='^', label='Calorias Diarias')
-            ax3.set_xlabel('Semanas', fontweight='bold')
-            ax3.set_ylabel('Calorias (kcal)', fontweight='bold')
-            ax3.set_title('Evolucao da Ingestao Calorica Diaria', fontsize=12, fontweight='bold')
-            ax3.legend(loc='upper right')
-            ax3.grid(True, linestyle='--', alpha=0.6)
-            ax3.set_facecolor('#fafafa')
-            
-            # Ajustes finais
-            for ax in axes:
-                ax.spines['top'].set_visible(False)
-                ax.spines['right'].set_visible(False)
-            
-            plt.tight_layout()
-            
-            # Converter figura para imagem base64
-            buf = io.BytesIO()
-            fig.savefig(buf, format='png', dpi=100, bbox_inches='tight')
-            buf.seek(0)
-            image_base64 = base64.b64encode(buf.read()).decode('utf-8')
-            buf.close()
-            plt.close(fig)
-            
-            # Adicionar imagem ao container
             image_widget = ft.Image(
                 src_base64=image_base64,
-                width=800,
-                height=900,
+                width=1000,
+                height=850,
                 fit=ft.ImageFit.CONTAIN,
             )
             
@@ -239,13 +228,67 @@ class PaginaResultados:
                     padding=10,
                     bgcolor=ft.Colors.GREY_50,
                     border_radius=10,
+                    width=1050,
                 )
             )
+            
+            self.graficos_wrapper.visible = True
+            self.graficos_wrapper.update()
             
         except Exception as ex:
             self.container_graficos.controls.append(
                 ft.Text(
-                    value=f"Aviso ao gerar graficos: {str(ex)}",
-                    color=ft.Colors.ORANGE,
+                    value=f"Erro ao gerar gráficos: {str(ex)}",
+                    color=ft.Colors.RED,
+                    size=12,
                 )
             )
+            self.graficos_wrapper.visible = True
+            self.graficos_wrapper.update()
+    
+    def _criar_card_resumo(self, titulo: str, valor_inicial: str, valor_final: str, variacao: float, unidade: str, cor: str) -> ft.Container:
+   
+        cor_variacao = ft.Colors.GREEN if variacao >= 0 else ft.Colors.RED
+        simbolo_variacao = "+" if variacao >= 0 else ""
+        
+        if titulo == "Taxa de Gordura" and variacao < 0:
+            cor_variacao = ft.Colors.GREEN
+            simbolo_variacao = ""
+        
+        return ft.Container(
+            content=ft.Column([
+        ft.Text(titulo, size=14, weight="bold", text_align=ft.TextAlign.CENTER, color=ft.Colors.WHITE),
+        ft.Container(height=5),
+
+        ft.Column([
+            ft.Row([
+                ft.Text("Inicial:", size=11, weight="bold", width=80, color=ft.Colors.WHITE),
+                ft.Text(valor_inicial, size=11, color=ft.Colors.WHITE),
+            ], alignment=ft.MainAxisAlignment.START, spacing=10),
+            ft.Row([
+                ft.Text("Final:", size=11, weight="bold", width=80, color=ft.Colors.WHITE),
+                ft.Text(valor_final, size=11, color=ft.Colors.WHITE),
+            ], alignment=ft.MainAxisAlignment.START, spacing=10),
+        ], spacing=8, horizontal_alignment=ft.CrossAxisAlignment.START),
+
+        ft.Container(height=8),
+        ft.Divider(height=1, color=ft.Colors.WHITE70),
+        ft.Container(height=8),
+
+        ft.Row([
+            ft.Text("Variação:", size=11, weight="bold", color=ft.Colors.WHITE),
+            ft.Text(
+                f"{simbolo_variacao}{variacao:.1f} {unidade}",
+                size=13, weight="bold", color=cor_variacao
+            ),
+        ], alignment=ft.MainAxisAlignment.CENTER, spacing=5),
+
+    ], spacing=5, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+    padding=15,
+    bgcolor=cor,
+    border_radius=10,
+    opacity=0.9,
+    width=200,
+    height=180,
+        )
+
