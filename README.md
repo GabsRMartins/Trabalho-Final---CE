@@ -472,7 +472,8 @@ Gasto Energético com Atividade (METs)
 Composição Corporal 
 ✅ Taxa de Gordura Saudável: Jackson & Pollock (1978). (Homens: 6-24%; Mulheres: 16-31%) 
 ✅ Conversão Peso↔Gordura: 7700 kcal/kg (Fonte: Estudos com calorimetria indireta; Ref: Lyle McDonald's Body Recomposition) 
-✅ Percentual de Mudança (Déficit): 75-82% gordura, 18-25% massa magra ✅ Percentual de Mudança (Superávit): 30-35% gordura, 65-70% massa magra ✅ Implementação: src/service/simulation.py
+✅ Percentual de Mudança (Déficit): 75-82% gordura, 18-25% massa magra 
+✅ Percentual de Mudança (Superávit): 30-35% gordura, 65-70% massa magra ✅ Implementação: src/service/simulation.py
 
 Algoritmo Genético ✅ Base Teórica: Teoria de Algoritmos - Problema da Mochila (Knapsack) ✅ Operadores: Seleção (Tournament, k=3), Cruzamento (Single-point), Mutação (Bit-flip, 8%), Elitismo (15%) ✅ Validação: Convergência em ~30 gerações ✅ Implementação: src/utils/alg_utils.py - IndividuoGenetico (classe)
 
