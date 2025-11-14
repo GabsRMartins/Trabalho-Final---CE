@@ -458,7 +458,8 @@ Cálculo de Metabolismo Basal (TMB)
 
 Gasto Energético com Atividade (METs) 
 ✅ Fonte Principal: Compendium of Physical Activities 2024 
-✅ Publicação: Ainsworth, B.E., et al. (2024). Journal of Sport and Health Science, 13(1): 6-12. [DOI: 10.1016/j.jshs.2023.10.010] ✅ Fontes Secundárias: Jette et al. (1990), Larson-Meyer (2016), WHO/ACSM Guidelines ✅ Fórmula: kcal = (MET × 3.5 × peso × duração) / 200 ✅ Implementação: src/entities/treino.py - TipoTreino (enum)
+✅ Publicação: Ainsworth, B.E., et al. (2024). Journal of Sport and Health Science, 13(1): 6-12. [DOI: 10.1016/j.jshs.2023.10.010] 
+✅ Fontes Secundárias: Jette et al. (1990), Larson-Meyer (2016), WHO/ACSM Guidelines ✅ Fórmula: kcal = (MET × 3.5 × peso × duração) / 200 ✅ Implementação: src/entities/treino.py - TipoTreino (enum)
 
 Índice de Massa Corporal (IMC) ✅ Fórmula: IMC = peso(kg) / altura(m)² ✅ Fonte: WHO (1995). "Physical Status: The Use and Interpretation of Anthropometry" ✅ Padrão Global: Amplamente aceito pela OMS ✅ Implementação: src/entities/individuo.py - calcular_imc()
 
