@@ -533,5 +533,5 @@ validação profissional.
 
 ---
 
-**Última Atualização:** 10 de Novembro, 2025
+**Última Atualização:** 13 de Novembro, 2025
 **Mantido por:** Sistema de Simulação - Trabalho Final CE
