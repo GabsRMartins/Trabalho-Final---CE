@@ -355,85 +355,111 @@ Modelo bem fundamentado cientificamente, com simplificações educacionais aprop
 
 ---
 
-# ✅ VALIDAÇÃO DE FONTES CIENTÍFICAS
+Validação de Modelo e Implementação
+Checklist de auditoria das bases científicas e sua implementação no sistema.
 
-## Checklist de Confiabilidade
+✅ 1. Cálculo de Metabolismo Basal (TMB)
+Fundamentação Científica:
 
-### 1. Cálculo de Metabolismo Basal (TMB)
-- ✅ **Fórmula:** Harris-Benedict (1919)
-- ✅ **Fontes Primárias:** 
-  - Harris, J.A., & Benedict, F.G. (1919). "A Biometric Study of Human Basal Metabolism"
-- ✅ **Validação:** Usada clinicamente há >100 anos
-- ✅ **Acurácia:** ±10-20% (adequada para modelagem)
-- ✅ **Implementação:** `src/entities/individuo.py - calcular_tmb()`
+Fórmula: Harris-Benedict (1919).
 
----
+Fonte Primária: Harris, J.A., & Benedict, F.G. (1919). "A Biometric Study of Human Basal Metabolism".
 
-### 2. Gasto Energético com Atividade (METs)
-- ✅ **Fonte Principal:** Compendium of Physical Activities 2024
-- ✅ **Publicação:**
-  - Ainsworth, B.E., et al. (2024)
-  - Journal of Sport and Health Science, 13(1): 6-12
-  - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10818145/
-  - DOI: 10.1016/j.jshs.2023.10.010
-- ✅ **Fontes Secundárias:**
-  - Jette et al. (1990) - Treinamento de força
-  - Larson-Meyer (2016) - Yoga
-  - WHO/ACSM Guidelines
-- ✅ **Fórmula:** kcal = (MET × 3.5 × peso × duração) / 200
-- ✅ **Implementação:** `src/entities/treino.py - TipoTreino enum`
+Validação: Padrão clínico usado há mais de 100 anos, com acurácia de ±10-20% (adequado para modelagem).
 
----
+Implementação no Sistema:
 
-### 3. Índice de Massa Corporal (IMC)
-- ✅ **Fórmula:** IMC = peso(kg) / altura(m)²
-- ✅ **Fonte:** WHO (1995) - Physical Status: The Use and Interpretation of Anthropometry
-- ✅ **Padrão Global:** Amplamente aceito pela OMS
-- ✅ **Implementação:** `src/entities/individuo.py - calcular_imc()`
+Local: src/entities/individuo.py
 
----
+Método: calcular_tmb()
 
-### 4. Composição Corporal
-- ✅ **Taxa de Gordura Saudável:** Jackson & Pollock (1978)
-  - Homens: 6-24%
-  - Mulheres: 16-31%
-- ✅ **Conversão Peso↔Gordura:** 7700 kcal/kg
-  - Fonte: Estudos com calorimetria indireta
-  - Referência: Lyle McDonald's Body Recomposition
-- ✅ **Percentual de Mudança:**
-  - Déficit: 75-82% gordura, 18-25% massa magra
-  - Superávit: 30-35% gordura, 65-70% massa magra
-- ✅ **Implementação:** `src/service/simulation.py`
+✅ 2. Gasto Energético com Atividade (METs)
+Fundamentação Científica:
 
----
+Fonte Principal: Compendium of Physical Activities (2024).
 
-### 5. Algoritmo Genético
-- ✅ **Base Teórica:** Teoria de Algoritmos - Problema da Mochila (Knapsack)
-- ✅ **Operadores:**
-  - Seleção: Tournament Selection (3 competidores)
-  - Cruzamento: Single-point crossover
-  - Mutação: Bit-flip (taxa 8%)
-  - Elitismo: 15% população
-- ✅ **Validação:** Convergência em ~30 gerações
-- ✅ **Implementação:** `src/utils/alg_utils.py - IndividuoGenetico class`
+Publicação: Ainsworth, B.E., et al. (2024). Journal of Sport and Health Science. [DOI: 10.1016/j.jshs.2023.10.010]
 
----
+Fontes Secundárias: Jette et al. (1990), Larson-Meyer (2016), Diretrizes WHO/ACSM.
 
-### 6. Diretrizes de Saúde
-- ✅ **ACSM** (American College of Sports Medicine)
-  - Haskell, W.L., et al. (2007)
-  - Circulation, 116(9): 1081-1093
-  
-- ✅ **WHO** (World Health Organization)
-  - Physical Activity Guidelines
-  - BMI Classification
-  
-- ✅ **Recomendações de Calorias:**
-  - Mínima: 1500 kcal (mulheres sedentárias)
-  - Máxima: 3500 kcal (homens muito ativos)
+Fórmula: kcal = (MET × 3.5 × peso_kg × duração_min) / 200
 
----
+Implementação no Sistema:
 
+Local: src/entities/treino.py
+
+Estrutura: Enum TipoTreino
+
+✅ 3. Índice de Massa Corporal (IMC)
+Fundamentação Científica:
+
+Fórmula: IMC = peso(kg) / altura(m)²
+
+Fonte: WHO (1995). "Physical Status: The Use and Interpretation of Anthropometry". Padrão global amplamente aceito.
+
+Implementação no Sistema:
+
+Local: src/entities/individuo.py
+
+Método: calcular_imc()
+
+✅ 4. Composição Corporal
+Fundamentação Científica:
+
+Taxa de Gordura Saudável: Método de Jackson & Pollock (1978). (Homens: 6-24%; Mulheres: 16-31%).
+
+Conversão Peso↔Gordura: ~7700 kcal/kg (Baseado em estudos de calorimetria indireta; Ref: Lyle McDonald).
+
+Particionamento (Déficit): 75-82% gordura, 18-25% massa magra.
+
+Particionamento (Superávit): 30-35% gordura, 65-70% massa magra.
+
+Implementação no Sistema:
+
+Local: src/service/simulation.py (Lógica de simulação de mudança de peso).
+
+✅ 5. Algoritmo Genético (Otimização)
+Fundamentação Teórica:
+
+Base: Teoria de Algoritmos de Otimização, aplicado a um problema similar ao "Problema da Mochila" (Knapsack).
+
+Operadores: Seleção (Torneio, k=3), Cruzamento (Ponto único), Mutação (Bit-flip, 8%), Elitismo (15%).
+
+Validação: Convergência observada em ~30 gerações.
+
+Implementação no Sistema:
+
+Local: src/utils/alg_utils.py
+
+Estrutura: Classe IndividuoGenetico
+
+✅ 6. Diretrizes de Saúde (Parâmetros)
+Fundamentação Científica:
+
+Atividade Física: Recomendações do ACSM (Haskell, W.L., et al. 2007) e WHO (Physical Activity Guidelines).
+
+Classificação Nutricional: Padrões de IMC da WHO.
+
+Limites Calóricos: Usados como referência para balanço energético (Ex: 1500 kcal a 3500 kcal, dependendo do perfil).
+
+Opção 2: Polimento Leve (Mantendo sua Estrutura)
+Esta versão mantém seu layout exato, apenas limpando a formatação das citações e arquivos para consistência.
+
+VALIDAÇÃO DE FONTES CIENTÍFICAS
+
+Checklist de Confiabilidade
+
+Cálculo de Metabolismo Basal (TMB) ✅ Fórmula: Harris-Benedict (1919) ✅ Fontes Primárias: Harris, J.A., & Benedict, F.G. (1919). "A Biometric Study of Human Basal Metabolism" ✅ Validação: Usada clinicamente há >100 anos ✅ Acurácia: ±10-20% (adequada para modelagem) ✅ Implementação: src/entities/individuo.py - calcular_tmb()
+
+Gasto Energético com Atividade (METs) ✅ Fonte Principal: Compendium of Physical Activities 2024 ✅ Publicação: Ainsworth, B.E., et al. (2024). Journal of Sport and Health Science, 13(1): 6-12. [DOI: 10.1016/j.jshs.2023.10.010] ✅ Fontes Secundárias: Jette et al. (1990), Larson-Meyer (2016), WHO/ACSM Guidelines ✅ Fórmula: kcal = (MET × 3.5 × peso × duração) / 200 ✅ Implementação: src/entities/treino.py - TipoTreino (enum)
+
+Índice de Massa Corporal (IMC) ✅ Fórmula: IMC = peso(kg) / altura(m)² ✅ Fonte: WHO (1995). "Physical Status: The Use and Interpretation of Anthropometry" ✅ Padrão Global: Amplamente aceito pela OMS ✅ Implementação: src/entities/individuo.py - calcular_imc()
+
+Composição Corporal ✅ Taxa de Gordura Saudável: Jackson & Pollock (1978). (Homens: 6-24%; Mulheres: 16-31%) ✅ Conversão Peso↔Gordura: 7700 kcal/kg (Fonte: Estudos com calorimetria indireta; Ref: Lyle McDonald's Body Recomposition) ✅ Percentual de Mudança (Déficit): 75-82% gordura, 18-25% massa magra ✅ Percentual de Mudança (Superávit): 30-35% gordura, 65-70% massa magra ✅ Implementação: src/service/simulation.py
+
+Algoritmo Genético ✅ Base Teórica: Teoria de Algoritmos - Problema da Mochila (Knapsack) ✅ Operadores: Seleção (Tournament, k=3), Cruzamento (Single-point), Mutação (Bit-flip, 8%), Elitismo (15%) ✅ Validação: Convergência em ~30 gerações ✅ Implementação: src/utils/alg_utils.py - IndividuoGenetico (classe)
+
+Diretrizes de Saúde ✅ ACSM: Haskell, W.L., et al. (2007). Circulation, 116(9): 1081-1093 ✅ WHO: Physical Activity Guidelines & BMI Classification ✅ Recomendações de Calorias: Mínima (1500 kcal) e Máxima (3500 kcal) usadas como referência.
 ## Dados Utilizados na Simulação (Exemplo Padrão)
 
 ### Indivíduo Padrão
