@@ -449,7 +449,12 @@ VALIDAÇÃO DE FONTES CIENTÍFICAS
 
 Checklist de Confiabilidade
 
-Cálculo de Metabolismo Basal (TMB) ✅ Fórmula: Harris-Benedict (1919) ✅ Fontes Primárias: Harris, J.A., & Benedict, F.G. (1919). "A Biometric Study of Human Basal Metabolism" ✅ Validação: Usada clinicamente há >100 anos ✅ Acurácia: ±10-20% (adequada para modelagem) ✅ Implementação: src/entities/individuo.py - calcular_tmb()
+Cálculo de Metabolismo Basal (TMB) 
+✅ Fórmula: Harris-Benedict (1919) 
+✅ Fontes Primárias: Harris, J.A., & Benedict, F.G. (1919). "A Biometric Study of Human Basal Metabolism" 
+✅ Validação: Usada clinicamente há >100 anos 
+✅ Acurácia: ±10-20% (adequada para modelagem) 
+✅ Implementação: src/entities/individuo.py - calcular_tmb()
 
 Gasto Energético com Atividade (METs) ✅ Fonte Principal: Compendium of Physical Activities 2024 ✅ Publicação: Ainsworth, B.E., et al. (2024). Journal of Sport and Health Science, 13(1): 6-12. [DOI: 10.1016/j.jshs.2023.10.010] ✅ Fontes Secundárias: Jette et al. (1990), Larson-Meyer (2016), WHO/ACSM Guidelines ✅ Fórmula: kcal = (MET × 3.5 × peso × duração) / 200 ✅ Implementação: src/entities/treino.py - TipoTreino (enum)
 
