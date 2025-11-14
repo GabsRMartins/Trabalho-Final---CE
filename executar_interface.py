@@ -1,27 +1,62 @@
 #!/usr/bin/env python3
 """
-Script para executar a interface gráfica Flet da Simulação de Evolução Corporal
+Ponto de entrada (Entry Point) para a Simulação de Evolução Corporal.
+
+Este script configura o ambiente (sys.path) e inicia a 
+interface gráfica principal da aplicação Flet.
 
 Execução:
     python executar_interface.py
 """
 
+# --- 1. Importações da Biblioteca Padrão ---
 import os
 import sys
 
-# Adicionar o diretório raiz ao path
-root_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, root_dir)
+# --- 2. Configuração do Path do Projeto ---
+# Adiciona o diretório raiz ao sys.path para garantir que 
+# os módulos em 'src' possam ser encontrados e importados.
+try:
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    if root_dir not in sys.path:
+        sys.path.insert(0, root_dir)
+except NameError:
+    # Fallback caso __file__ não esteja definido (ex: em alguns REPLs)
+    print("Aviso: __file__ não definido. Assumindo diretório atual como raiz.")
+    sys.path.insert(0, os.getcwd())
 
-from src.interface.app import main
+
+# --- 3. Importações de Terceiros e do Projeto ---
 import flet as ft
 
-if __name__ == "__main__":
+try:
+    # Importa a função 'main' de dentro do pacote da interface
+    from src.interface.app import main as main_app
+except ImportError as e:
+    print(f"❌ Erro Fatal: Não foi possível encontrar o módulo 'src.interface.app'.")
+    print(f"Certifique-se de que a estrutura de pastas (src/interface/app.py) está correta.")
+    print(f"Detalhe do erro: {e}")
+    sys.exit(1) # Encerra o script se o módulo principal não for encontrado
+
+
+# --- 4. Função de Execução Principal ---
+def run_application():
+    """
+    Configura e inicia a aplicação Flet.
+    """
     print("🚀 Iniciando Interface de Simulação de Evolução Corporal...")
     print("📊 Interface baseada em Flet (Flutter for Python)")
     
     try:
-        ft.app(target=main)
+        # Inicia a aplicação Flet passando a função 'main' importada
+        ft.app(target=main_app)
+        
     except Exception as e:
-        print(f"❌ Erro ao iniciar a aplicação: {e}")
+        # Captura qualquer erro inesperado durante a execução da app
+        print(f"❌ Erro crítico ao executar a aplicação: {e}")
         sys.exit(1)
+
+# --- 5. Ponto de Entrada Padrão ---
+if __name__ == "__main__":
+    # Chama a função de execução
+    run_application()
