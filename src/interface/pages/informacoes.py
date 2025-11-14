@@ -1,29 +1,12 @@
-"""
-Módulo refatorado para a aba de Informações.
-
-Esta versão melhora a estrutura, separando os dados da lógica da interface,
-e utiliza Cards e Ícones para uma apresentação visual mais agradável.
-"""
 
 import flet as ft
-
 class PaginaInformacoes:
-    """
-    Constrói a aba de "Informações" da aplicação, exibindo detalhes
-    sobre o projeto, fontes e tecnologia em um layout de cartões.
-    """
+   
 
     def __init__(self):
-        """
-        Inicializa a página.
-        Os dados de informação são carregados aqui para fácil manutenção.
-        """
-        # 1. DADOS ESTRUTURADOS
-        # Manter os dados separados da UI facilita a atualização.
-        # Cada dicionário representa um "Card" na interface.
         self.info_sections = [
             {
-                "icon": ft.icons.SCIENCE_OUTLINED,
+                "icon": ft.Icons.SCIENCE_OUTLINED,
                 "title": "SOBRE A SIMULAÇÃO",
                 "text": "Esta aplicação simula a evolução corporal de um indivíduo ao longo de semanas, considerando:",
                 "list_items": [
@@ -33,10 +16,10 @@ class PaginaInformacoes:
                     "Mudanças de Composição Corporal",
                     "Ajustes Metabólicos Dinâmicos"
                 ],
-                "color": ft.colors.BLUE_GREY_700
+                "color": ft.Colors.BLUE_GREY_700
             },
             {
-                "icon": ft.icons.MENU_BOOK_OUTLINED,
+                "icon": ft.Icons.MENU_BOOK_OUTLINED,
                 "title": "FONTES CIENTÍFICAS",
                 "text": "A simulação é baseada nas seguintes publicações e padrões:",
                 "list_items": [
@@ -45,10 +28,10 @@ class PaginaInformacoes:
                     "Jackson & Pollock (1978) - Composição Corporal",
                     "WHO (1995) - Índice de Massa Corporal"
                 ],
-                "color": ft.colors.BLUE_GREY_700
+                "color": ft.Colors.BLUE_GREY_700
             },
             {
-                "icon": ft.icons.BUILD_OUTLINED,
+                "icon": ft.Icons.BUILD_OUTLINED,
                 "title": "TECNOLOGIA",
                 "text": "Componentes tecnológicos utilizados no desenvolvimento:",
                 "list_items": [
@@ -57,24 +40,24 @@ class PaginaInformacoes:
                     "Matplotlib - Visualização de Gráficos",
                     "Python 3.10+"
                 ],
-                "color": ft.colors.BLUE_GREY_700
+                "color": ft.Colors.BLUE_GREY_700
             },
             {
-                "icon": ft.icons.WARNING_AMBER_ROUNDED,
+                "icon": ft.Icons.WARNING_AMBER_ROUNDED,
                 "title": "AVISO IMPORTANTE",
                 "text": "Esta é uma simulação educacional para fins acadêmicos. Não deve ser usada para prescrição nutricional ou médica.",
                 "list_items": [],
-                "color": ft.colors.RED_700  # Cor de destaque para o aviso
+                "color": ft.Colors.RED_700  # Cor de destaque para o aviso
             },
             {
-                "icon": ft.icons.DESCRIPTION_OUTLINED,
+                "icon": ft.Icons.DESCRIPTION_OUTLINED,
                 "title": "DOCUMENTAÇÃO",
                 "text": "Para mais detalhes, consulte os arquivos de validação e fontes no repositório do projeto:",
                 "list_items": [
                     "FONTES_CIENTIFICAS.md",
                     "VALIDACAO_FONTES.md"
                 ],
-                "color": ft.colors.BLUE_GREY_700
+                "color": ft.Colors.BLUE_GREY_700
             }
         ]
 
@@ -98,12 +81,12 @@ class PaginaInformacoes:
                         controls=[
                             ft.Icon(
                                 # Usa ícones diferentes para itens de lista
-                                ft.icons.CHECK_CIRCLE_OUTLINE if section["title"] != "DOCUMENTAÇÃO" 
-                                else ft.icons.ARTICLE_OUTLINED,
-                                color=ft.colors.GREEN_700 if section["title"] != "DOCUMENTAÇÃO" else ft.colors.GREY_700,
+                                ft.Icons.CHECK_CIRCLE_OUTLINE if section["title"] != "DOCUMENTAÇÃO" 
+                                else ft.Icons.ARTICLE_OUTLINED,
+                                color=ft.Colors.GREEN_700 if section["title"] != "DOCUMENTAÇÃO" else ft.Colors.GREY_700,
                                 size=18
                             ),
-                            ft.Text(item, size=14, color=ft.colors.BLACK87, expand=True), # expand=True garante a quebra de linha
+                            ft.Text(item, size=14, color=ft.Colors.BLACK87, expand=True), # expand=True garante a quebra de linha
                         ],
                         spacing=10
                     )
@@ -130,7 +113,7 @@ class PaginaInformacoes:
                             alignment=ft.MainAxisAlignment.START,
                             spacing=10
                         ),
-                        ft.Divider(height=1, color=ft.colors.GREY_300),
+                        ft.Divider(height=1, color=ft.Colors.GREY_300),
                         
                         # --- Container do Conteúdo ---
                         ft.Container(
@@ -139,7 +122,7 @@ class PaginaInformacoes:
                                     ft.Text(
                                         section["text"],
                                         size=15,
-                                        color=ft.colors.BLACK87,
+                                        color=ft.Colors.BLACK87,
                                         italic=(section["title"] == "AVISO IMPORTANTE") # Coloca aviso em itálico
                                     ),
                                     # Adiciona a coluna de lista de itens (se houver)
@@ -168,7 +151,7 @@ class PaginaInformacoes:
         
         return ft.Container(
             # Define uma cor de fundo sutil para a aba
-            bgcolor=ft.colors.GREY_100,
+            bgcolor=ft.Colors.GREY_100,
             padding=ft.padding.symmetric(horizontal=10, vertical=15),
             alignment=ft.alignment.top_center,
             expand=True,
@@ -189,7 +172,7 @@ class PaginaInformacoes:
         # O conteúdo real é delegado para _build_content_view.
         return ft.Tab(
             text="Informações",
-            icon=ft.icons.INFO_OUTLINE, # Ícone na própria aba
+            icon=ft.Icons.INFO_OUTLINE, # Ícone na própria aba
             content=self._build_content_view()
         )
 
@@ -219,12 +202,8 @@ def main(page: ft.Page):
     
     page.appbar = ft.AppBar(
         title=ft.Text("Simulador de Evolução Corporal"),
-        bgcolor=ft.colors.BLUE_GREY_800
+        bgcolor=ft.Colors.BLUE_GREY_800
     )
 
     page.add(tabs_control)
     page.update()
-
-if __name__ == "__main__":
-    # Executa o aplicativo Flet
-    ft.app(target=main)
