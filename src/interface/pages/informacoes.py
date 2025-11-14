@@ -48,16 +48,6 @@ class PaginaInformacoes:
                 "text": "Esta é uma simulação educacional para fins acadêmicos. Não deve ser usada para prescrição nutricional ou médica.",
                 "list_items": [],
                 "color": ft.Colors.RED_700  
-            },
-            {
-                "icon": ft.Icons.DESCRIPTION_OUTLINED,
-                "title": "DOCUMENTAÇÃO",
-                "text": "Para mais detalhes, consulte os arquivos de validação e fontes no repositório do projeto:",
-                "list_items": [
-                    "FONTES_CIENTIFICAS.md",
-                    "VALIDACAO_FONTES.md"
-                ],
-                "color": ft.Colors.BLUE_GREY_700
             }
         ]
 
@@ -155,29 +145,3 @@ class PaginaInformacoes:
             content=self._build_content_view()
         )
 
-def main(page: ft.Page):
-  
-    page.title = "Teste da Página de Informações"
-    page.vertical_alignment = ft.MainAxisAlignment.START
-    page.window_width = 500
-    page.window_height = 800
-
- 
-    pagina_info = PaginaInformacoes()
-
-    
-    tabs_control = ft.Tabs(
-        selected_index=0,
-        expand=1,
-        tabs=[
-            pagina_info.build()  
-        ]
-    )
-    
-    page.appbar = ft.AppBar(
-        title=ft.Text("Simulador de Evolução Corporal"),
-        bgcolor=ft.Colors.BLUE_GREY_800
-    )
-
-    page.add(tabs_control)
-    page.update()
