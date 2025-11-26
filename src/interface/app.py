@@ -108,6 +108,9 @@ class AppSimulador:
         )
     
     def _on_dados_validados(self, individuo, semanas):
+
+        self.pagina_treino.set_peso_individuo(individuo.peso)
+        
         self.pagina_resultados.set_parametros_simulacao(
             individuo=individuo,
             alimentos=self.alimentos,
