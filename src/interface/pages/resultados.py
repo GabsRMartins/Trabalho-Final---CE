@@ -8,6 +8,8 @@ import copy
 from src.service.simulation import simular_evolucao
 from src.entities.individuo import Individuo
 from src.interface.util.graficos import criar_graficos_evolucao
+from src.utils.alg_utils import obter_historico_dietas, resetar_cache_elitismo
+from src.interface.components.dieta_card import criar_dieta_card
 
 
 class PaginaResultados:
@@ -24,65 +26,207 @@ class PaginaResultados:
         self.alert_placeholder = ft.Column(controls=[], tight=True)
         
         self.txt_status = ft.Text(
-            value="Aguardando simulação...",
-            size=13,
-            color=ft.Colors.ORANGE,
+            value="Configure os dados e escolha uma ficha de treino para iniciar",
+            size=14,
+            color=ft.Colors.BLUE_GREY_600,
+            weight=ft.FontWeight.W_500,
+            text_align=ft.TextAlign.CENTER,
         )
         
-        self.progress_bar = ft.ProgressBar(visible=False)
+        self.progress_bar = ft.ProgressBar(visible=False, color=ft.Colors.BLUE_700)
         
         self.container_resumo = ft.Row(spacing=15, wrap=True, alignment=ft.MainAxisAlignment.CENTER)
         self.container_graficos = ft.Column(spacing=10, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        self.container_dietas = ft.Column(spacing=10, alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         
-        # Container wrapper para o resumo
+
         self.resumo_wrapper = ft.Container(
             content=ft.Column([
-                ft.Text("Resumo da Evolução", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
-                ft.Container(height=10),
+                ft.Row(
+                    controls=[
+                        ft.Icon(ft.Icons.ASSESSMENT, size=26, color=ft.Colors.BLUE_700),
+                        ft.Text(
+                            "Resumo da Evolucao",
+                            size=22,
+                            weight=ft.FontWeight.BOLD,
+                            color=ft.Colors.BLUE_700,
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=10,
+                ),
+                ft.Container(height=15),
                 self.container_resumo,
             ], spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            padding=20,
+            padding=25,
             visible=False,
+            bgcolor=ft.Colors.WHITE,
+            border_radius=15,
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=8,
+                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2),
+            ),
         )
         
-        # Container wrapper para os gráficos
         self.graficos_wrapper = ft.Container(
             content=ft.Column([
-                ft.Text("Dados de Evolução", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
-                ft.Container(height=10),
+                ft.Row(
+                    controls=[
+                        ft.Icon(ft.Icons.SHOW_CHART, size=26, color=ft.Colors.GREEN_700),
+                        ft.Text(
+                            "Graficos de Evolucao",
+                            size=22,
+                            weight=ft.FontWeight.BOLD,
+                            color=ft.Colors.BLUE_700,
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=10,
+                ),
+                ft.Container(height=15),
                 self.container_graficos,
             ], spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            padding=20,
+            padding=25,
             visible=False,
+            bgcolor=ft.Colors.WHITE,
+            border_radius=15,
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=8,
+                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2),
+            ),
         )
         
-        self.btn_executar = ft.ElevatedButton(
-            text="Executar Simulação",
-            on_click=self._executar_simulacao,
-            bgcolor=ft.Colors.RED_700,
-            color="white",
-            width=320,
+        # Container wrapper para as dietas utilizadas
+        self.dietas_wrapper = ft.Container(
+            content=ft.Column([
+                ft.Row(
+                    controls=[
+                        ft.Icon(ft.Icons.RESTAURANT_MENU, size=26, color=ft.Colors.ORANGE_700),
+                        ft.Text(
+                            "Dietas Utilizadas na Simulacao",
+                            size=22,
+                            weight=ft.FontWeight.BOLD,
+                            color=ft.Colors.BLUE_700,
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=10,
+                ),
+                ft.Text(
+                    "Mostrando ate 10 variacoes de dietas geradas pelo algoritmo genetico",
+                    size=13,
+                    color=ft.Colors.GREY_600,
+                    italic=True,
+                    text_align=ft.TextAlign.CENTER,
+                ),
+                ft.Container(height=15),
+                self.container_dietas,
+            ], spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            padding=25,
+            visible=False,
+            bgcolor=ft.Colors.WHITE,
+            border_radius=15,
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=8,
+                color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2),
+            ),
         )
         
-        # Layout centralizado com scroll
-        self.content_column = ft.Column(
-            scroll=ft.ScrollMode.AUTO,
-            alignment=ft.MainAxisAlignment.START,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                ft.Container(height=20),
-                ft.Text("Simulação de Evolução Corporal", size=24, weight="bold", text_align=ft.TextAlign.CENTER),
-                ft.Container(height=10),
-                self.alert_placeholder,
-                self.txt_status,
-                ft.Container(height=10),
-                self.btn_executar,
-                self.progress_bar,
-                ft.Container(height=20),
-                self.resumo_wrapper,
-                self.graficos_wrapper,
-                ft.Container(height=20),
-            ],
+
+        self.btn_executar = ft.Container(
+            content=ft.ElevatedButton(
+                text="Executar Simulacao",
+                icon=ft.Icons.PLAY_ARROW,
+                on_click=self._executar_simulacao,
+                bgcolor=ft.Colors.GREEN_600,
+                color=ft.Colors.WHITE,
+                height=55,
+                style=ft.ButtonStyle(
+                    shape=ft.RoundedRectangleBorder(radius=12),
+                ),
+            ),
+            width=400,
+        )
+        
+
+        self.content_column = ft.Container(
+            content=ft.Column(
+                controls=[
+
+                    ft.Container(
+                        content=ft.Row(
+                            controls=[
+                                ft.Icon(ft.Icons.ROCKET_LAUNCH, size=32, color=ft.Colors.BLUE_700),
+                                ft.Text(
+                                    "Simulacao de Evolucao",
+                                    size=28,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=ft.Colors.BLUE_700,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=12,
+                        ),
+                        margin=ft.margin.only(bottom=20),
+                    ),
+                    
+                    self.alert_placeholder,
+                    
+                    ft.Container(
+                        content=ft.Column(
+                            controls=[
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls=[
+                                            self.txt_status,
+                                            ft.Container(height=15),
+                                            self.btn_executar,
+                                            ft.Container(height=10),
+                                            self.progress_bar,
+                                        ],
+                                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                    ),
+                                    padding=30,
+                                    bgcolor=ft.Colors.BLUE_50,
+                                    border_radius=12,
+                                    border=ft.border.all(2, ft.Colors.BLUE_200),
+                                ),
+                            ],
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        ),
+                        bgcolor=ft.Colors.WHITE,
+                        padding=25,
+                        border_radius=15,
+                        shadow=ft.BoxShadow(
+                            spread_radius=1,
+                            blur_radius=10,
+                            color=ft.Colors.with_opacity(0.15, ft.Colors.BLACK),
+                            offset=ft.Offset(0, 2),
+                        ),
+                        width=500,
+                    ),
+                    
+                    ft.Container(height=30),
+                    
+
+                    self.resumo_wrapper,
+                    ft.Container(height=20),
+                    self.graficos_wrapper,
+                    ft.Container(height=20),
+                    self.dietas_wrapper,
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                scroll=ft.ScrollMode.AUTO,
+            ),
+            padding=30,
+            bgcolor=ft.Colors.GREY_50,
+            expand=True,
         )
         
         return ft.Tab(
@@ -110,8 +254,11 @@ class PaginaResultados:
             self.btn_executar.opacity = 0.5
             self.btn_executar.update()
             
-            self.txt_status.value = "Simulando... Aguarde..."
-            self.txt_status.color = ft.Colors.ORANGE
+
+            resetar_cache_elitismo()
+            
+            self.txt_status.value = "Executando simulacao... Por favor aguarde..."
+            self.txt_status.color = ft.Colors.ORANGE_700
             self.progress_bar.visible = True
             self.txt_status.update()
             self.progress_bar.update()
@@ -121,8 +268,8 @@ class PaginaResultados:
             
             self._exibir_resultados(individuo_sim)
             
-            self.txt_status.value = "Simulação Concluída com Sucesso!"
-            self.txt_status.color = ft.Colors.GREEN
+            self.txt_status.value = "Simulacao Concluida com Sucesso!"
+            self.txt_status.color = ft.Colors.GREEN_600
             self.progress_bar.visible = False
             self.txt_status.update()
             self.progress_bar.update()
@@ -149,7 +296,6 @@ class PaginaResultados:
             self.btn_executar.update()
     
     def _close_alert(self, e):
-        """Callback para fechar o alerta"""
         self.alert_placeholder.controls = []
         try:
             self.alert_placeholder.update()
@@ -245,50 +391,170 @@ class PaginaResultados:
             )
             self.graficos_wrapper.visible = True
             self.graficos_wrapper.update()
+        
+        # Exibir histórico de dietas
+        self._exibir_dietas()
     
     def _criar_card_resumo(self, titulo: str, valor_inicial: str, valor_final: str, variacao: float, unidade: str, cor: str) -> ft.Container:
    
-        cor_variacao = ft.Colors.GREEN if variacao >= 0 else ft.Colors.RED
+        cor_variacao = ft.Colors.GREEN_600 if variacao >= 0 else ft.Colors.RED_600
         simbolo_variacao = "+" if variacao >= 0 else ""
         
         if titulo == "Taxa de Gordura" and variacao < 0:
-            cor_variacao = ft.Colors.GREEN
+            cor_variacao = ft.Colors.GREEN_600
             simbolo_variacao = ""
         
         return ft.Container(
             content=ft.Column([
-        ft.Text(titulo, size=14, weight="bold", text_align=ft.TextAlign.CENTER, color=ft.Colors.WHITE),
-        ft.Container(height=5),
+                ft.Text(
+                    titulo,
+                    size=15,
+                    weight=ft.FontWeight.BOLD,
+                    text_align=ft.TextAlign.CENTER,
+                    color=ft.Colors.WHITE,
+                ),
+                ft.Container(height=8),
 
-        ft.Column([
-            ft.Row([
-                ft.Text("Inicial:", size=11, weight="bold", width=80, color=ft.Colors.WHITE),
-                ft.Text(valor_inicial, size=11, color=ft.Colors.WHITE),
-            ], alignment=ft.MainAxisAlignment.START, spacing=10),
-            ft.Row([
-                ft.Text("Final:", size=11, weight="bold", width=80, color=ft.Colors.WHITE),
-                ft.Text(valor_final, size=11, color=ft.Colors.WHITE),
-            ], alignment=ft.MainAxisAlignment.START, spacing=10),
-        ], spacing=8, horizontal_alignment=ft.CrossAxisAlignment.START),
+                ft.Column([
+                    ft.Row([
+                        ft.Text("Inicial:", size=12, weight=ft.FontWeight.W_600, width=65, color=ft.Colors.WHITE),
+                        ft.Text(valor_inicial, size=12, color=ft.Colors.WHITE70),
+                    ], alignment=ft.MainAxisAlignment.START, spacing=8),
+                    ft.Row([
+                        ft.Text("Final:", size=12, weight=ft.FontWeight.W_600, width=65, color=ft.Colors.WHITE),
+                        ft.Text(valor_final, size=12, color=ft.Colors.WHITE70),
+                    ], alignment=ft.MainAxisAlignment.START, spacing=8),
+                ], spacing=6, horizontal_alignment=ft.CrossAxisAlignment.START),
 
-        ft.Container(height=8),
-        ft.Divider(height=1, color=ft.Colors.WHITE70),
-        ft.Container(height=8),
+                ft.Container(height=10),
+                ft.Divider(height=1, color=ft.Colors.WHITE54),
+                ft.Container(height=10),
 
-        ft.Row([
-            ft.Text("Variação:", size=11, weight="bold", color=ft.Colors.WHITE),
-            ft.Text(
-                f"{simbolo_variacao}{variacao:.1f} {unidade}",
-                size=13, weight="bold", color=cor_variacao
+                ft.Column([
+                    ft.Text("Variacao:", size=11, weight=ft.FontWeight.W_500, color=ft.Colors.WHITE70),
+                    ft.Text(
+                        f"{simbolo_variacao}{variacao:.1f} {unidade}",
+                        size=16,
+                        weight=ft.FontWeight.BOLD,
+                        color=cor_variacao,
+                    ),
+                ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+
+            ], spacing=4, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            padding=18,
+            bgcolor=cor,
+            border_radius=12,
+            width=210,
+            height=200,
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=6,
+                color=ft.Colors.with_opacity(0.3, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2),
             ),
-        ], alignment=ft.MainAxisAlignment.CENTER, spacing=5),
-
-    ], spacing=5, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-    padding=15,
-    bgcolor=cor,
-    border_radius=10,
-    opacity=0.9,
-    width=200,
-    height=180,
         )
+    
+    def _exibir_dietas(self):
+        self.container_dietas.controls.clear()
+        historico = obter_historico_dietas()
+        
+        if not historico:
+            self.container_dietas.controls.append(
+                ft.Container(
+                    content=ft.Text(
+                        "Nenhuma variacao de dieta foi gerada ainda.",
+                        size=14,
+                        color=ft.Colors.GREY_600,
+                        italic=True,
+                    ),
+                    padding=20,
+                )
+            )
+        else:
+            # Identificar dietas de maior e menor calorias
+            if len(historico) > 1:
+                indice_maior = max(range(len(historico)), key=lambda i: historico[i]['calorias'])
+                indice_menor = min(range(len(historico)), key=lambda i: historico[i]['calorias'])
+                
+                # Criar cards de destaque separados no topo
+                cards_destaque = ft.Row(
+                    controls=[
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.TRENDING_UP, size=24, color=ft.Colors.RED_700),
+                                    ft.Text(
+                                        "Dieta Mais Calorica",
+                                        size=18,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=ft.Colors.RED_900,
+                                    ),
+                                ], spacing=10),
+                                ft.Divider(height=1, color=ft.Colors.RED_300),
+                                criar_dieta_card(historico[indice_maior], indice_maior + 1, destaque='maior'),
+                            ], spacing=12, tight=True),
+                            padding=15,
+                            bgcolor=ft.Colors.WHITE,
+                            border_radius=12,
+                            border=ft.border.all(2, ft.Colors.RED_200),
+                            width=480,
+                        ),
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.TRENDING_DOWN, size=24, color=ft.Colors.GREEN_700),
+                                    ft.Text(
+                                        "Dieta Menos Calorica",
+                                        size=18,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=ft.Colors.GREEN_900,
+                                    ),
+                                ], spacing=10),
+                                ft.Divider(height=1, color=ft.Colors.GREEN_300),
+                                criar_dieta_card(historico[indice_menor], indice_menor + 1, destaque='menor'),
+                            ], spacing=12, tight=True),
+                            padding=15,
+                            bgcolor=ft.Colors.WHITE,
+                            border_radius=12,
+                            border=ft.border.all(2, ft.Colors.GREEN_200),
+                            width=480,
+                        ),
+                    ],
+                    spacing=20,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    wrap=True,
+                )
+                
+                self.container_dietas.controls.append(cards_destaque)
+                self.container_dietas.controls.append(ft.Container(height=25))
+                
+                # Adicionar título para todas as dietas
+                self.container_dietas.controls.append(
+                    ft.Row([
+                        ft.Icon(ft.Icons.LIST, size=22, color=ft.Colors.BLUE_700),
+                        ft.Text(
+                            "Todas as Variacoes de Dietas",
+                            size=20,
+                            weight=ft.FontWeight.BOLD,
+                            color=ft.Colors.BLUE_700,
+                        ),
+                    ], spacing=10, alignment=ft.MainAxisAlignment.CENTER)
+                )
+                self.container_dietas.controls.append(ft.Container(height=15))
+            
+
+            for idx, dieta in enumerate(historico, 1):
+
+                destaque = None
+                if len(historico) > 1:
+                    if idx - 1 == indice_maior:
+                        destaque = 'maior'
+                    elif idx - 1 == indice_menor:
+                        destaque = 'menor'
+                
+                card = criar_dieta_card(dieta, idx, destaque=destaque)
+                self.container_dietas.controls.append(card)
+        
+        self.dietas_wrapper.visible = True
+        self.dietas_wrapper.update()
 

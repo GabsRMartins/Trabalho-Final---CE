@@ -50,10 +50,53 @@ class AppSimulador:
             expand=True,
         )
         
+
         header = ft.Container(
-            content=ft.Text("Simulador de Evolução Corporal", size=20, weight="bold", text_align=ft.TextAlign.CENTER),
+            content=ft.Column(
+                controls=[
+                    ft.Row(
+                        controls=[
+                            ft.Icon(
+                                name=ft.Icons.FITNESS_CENTER,
+                                size=32,
+                                color=ft.Colors.WHITE,
+                            ),
+                            ft.Text(
+                                "Simulador de Evolucao Corporal",
+                                size=28,
+                                weight=ft.FontWeight.BOLD,
+                                color=ft.Colors.WHITE,
+                                text_align=ft.TextAlign.CENTER,
+                            ),
+                            ft.Icon(
+                                name=ft.Icons.SHOW_CHART,
+                                size=32,
+                                color=ft.Colors.WHITE,
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=15,
+                    ),
+                    ft.Text(
+                        "Otimizacao Genetica de Dieta e Treino",
+                        size=14,
+                        color=ft.Colors.WHITE70,
+                        text_align=ft.TextAlign.CENTER,
+                        italic=True,
+                    ),
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=5,
+            ),
             bgcolor=ft.Colors.BLUE_700,
-            padding=15,
+            padding=20,
+            border_radius=ft.border_radius.only(bottom_left=15, bottom_right=15),
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=10,
+                color=ft.Colors.with_opacity(0.3, ft.Colors.BLACK),
+                offset=ft.Offset(0, 2),
+            ),
         )
         
         return ft.Column(

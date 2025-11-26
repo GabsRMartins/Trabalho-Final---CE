@@ -17,24 +17,32 @@ class PaginaDadosPessoais:
         self.dados_validados = None
 
     def build(self):
-        input_width = 320
+        input_width = 340
+        
+    
         self.txt_peso = ft.TextField(
             label="Peso (kg)",
             hint_text="Ex: 75",
             keyboard_type=ft.KeyboardType.NUMBER,
             width=input_width,
+            border_color=ft.Colors.BLUE_200,
+            focused_border_color=ft.Colors.BLUE_700,
         )
         self.txt_altura = ft.TextField(
             label="Altura (m)",
             hint_text="Ex: 1.75",
             keyboard_type=ft.KeyboardType.NUMBER,
             width=input_width,
+            border_color=ft.Colors.BLUE_200,
+            focused_border_color=ft.Colors.BLUE_700,
         )
         self.txt_idade = ft.TextField(
             label="Idade (anos)",
             hint_text="Ex: 30",
             keyboard_type=ft.KeyboardType.NUMBER,
             width=input_width,
+            border_color=ft.Colors.BLUE_200,
+            focused_border_color=ft.Colors.BLUE_700,
         )
         self.dropdown_sexo = ft.Dropdown(
             label="Sexo",
@@ -43,17 +51,21 @@ class PaginaDadosPessoais:
                 ft.dropdown.Option("F", "Feminino"),
             ],
             width=input_width,
+            border_color=ft.Colors.BLUE_200,
+            focused_border_color=ft.Colors.BLUE_700,
         )
         self.txt_taxa_gordura = ft.TextField(
             label="Taxa de Gordura Corporal (%)",
             hint_text="Ex: 25",
             keyboard_type=ft.KeyboardType.NUMBER,
             width=input_width,
+            border_color=ft.Colors.BLUE_200,
+            focused_border_color=ft.Colors.BLUE_700,
         )
         self.dropdown_atividade = ft.Dropdown(
-            label="Nível de Atividade",
+            label="Nivel de Atividade",
             options=[
-                ft.dropdown.Option("1.2", "Sedentário (pouco exercício)"),
+                ft.dropdown.Option("1.2", "Sedentario (pouco exercicio)"),
                 ft.dropdown.Option("1.375", "Levemente ativo (1-3 dias/semana)"),
                 ft.dropdown.Option("1.55", "Moderadamente ativo (3-5 dias/semana)"),
                 ft.dropdown.Option("1.725", "Muito ativo (6-7 dias/semana)"),
@@ -61,56 +73,154 @@ class PaginaDadosPessoais:
             ],
             value="1.55",
             width=input_width,
+            border_color=ft.Colors.BLUE_200,
+            focused_border_color=ft.Colors.BLUE_700,
         )
         self.txt_semanas = ft.TextField(
-            label="Número de Semanas a Simular",
+            label="Numero de Semanas a Simular",
             hint_text="Ex: 36",
             keyboard_type=ft.KeyboardType.NUMBER,
             value="36",
             width=input_width,
+            border_color=ft.Colors.BLUE_200,
+            focused_border_color=ft.Colors.BLUE_700,
         )
 
-        # Placeholder para alertas (será atualizado dinamicamente)
+        # Placeholder para alertas
         self.alert_placeholder = ft.Column(controls=[], tight=True)
 
-        btn_validar = ft.ElevatedButton(
-            text="Validar Dados",
-            on_click=self._validar_dados,
-            bgcolor=ft.Colors.GREEN,
-            color="white",
+       
+        btn_validar = ft.Container(
+            content=ft.ElevatedButton(
+                text="Validar e Continuar",
+                icon=ft.Icons.CHECK_CIRCLE,
+                on_click=self._validar_dados,
+                bgcolor=ft.Colors.GREEN_600,
+                color=ft.Colors.WHITE,
+                height=50,
+                style=ft.ButtonStyle(
+                    shape=ft.RoundedRectangleBorder(radius=10),
+                ),
+            ),
             width=input_width,
         )
 
-        # Layout centralizado com scroll
-        form_content = ft.Column(
-            scroll=ft.ScrollMode.AUTO,
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                ft.Container(height=20),  # espaçador topo
-                ft.Text("Insira Seus Dados Pessoais", size=22, weight="bold", text_align=ft.TextAlign.CENTER),
-                ft.Container(height=10),
-                self.alert_placeholder,
-                ft.Container(
-                    content=ft.Column([
-                        self.txt_peso,
-                        self.txt_altura,
-                        self.txt_idade,
-                        self.dropdown_sexo,
-                        self.txt_taxa_gordura,
-                        ft.Divider(),
-                        ft.Text("Atividade Basal", size=14, weight="bold", text_align=ft.TextAlign.CENTER),
-                        self.dropdown_atividade,
-                        ft.Divider(),
-                        ft.Text("Configuração da Simulação", size=14, weight="bold", text_align=ft.TextAlign.CENTER),
-                        self.txt_semanas,
-                        ft.Container(height=10),
-                        btn_validar,
-                        ft.Container(height=20),  # espaçador rodapé
-                    ], spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                    padding=ft.padding.symmetric(horizontal=20, vertical=20),
-                ),
-            ],
+
+        form_content = ft.Container(
+            content=ft.Column(
+                controls=[
+
+                    ft.Container(
+                        content=ft.Row(
+                            controls=[
+                                ft.Icon(ft.Icons.PERSON, size=30, color=ft.Colors.BLUE_700),
+                                ft.Text(
+                                    "Dados Pessoais",
+                                    size=26,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=ft.Colors.BLUE_700,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=10,
+                        ),
+                        margin=ft.margin.only(bottom=20),
+                    ),
+                    
+
+                    self.alert_placeholder,
+                    
+
+                    ft.Row(
+                        controls=[
+                            ft.Container(
+                                content=ft.Column(
+                                    controls=[
+
+                                        ft.Row(
+                                            controls=[
+                                                ft.Icon(ft.Icons.MONITOR_WEIGHT, size=22, color=ft.Colors.BLUE_700),
+                                                ft.Text(
+                                                    "Informacoes Fisicas",
+                                                    size=18,
+                                                    weight=ft.FontWeight.BOLD,
+                                                    color=ft.Colors.BLUE_900,
+                                                ),
+                                            ],
+                                            spacing=8,
+                                        ),
+                                        ft.Divider(height=1, color=ft.Colors.BLUE_200),
+                                        self.txt_peso,
+                                        self.txt_altura,
+                                        self.txt_idade,
+                                        self.dropdown_sexo,
+                                        self.txt_taxa_gordura,
+                                        
+                                        ft.Container(height=15),
+                                        
+
+                                        ft.Row(
+                                            controls=[
+                                                ft.Icon(ft.Icons.DIRECTIONS_RUN, size=22, color=ft.Colors.ORANGE_700),
+                                                ft.Text(
+                                                    "Atividade Basal",
+                                                    size=18,
+                                                    weight=ft.FontWeight.BOLD,
+                                                    color=ft.Colors.BLUE_900,
+                                                ),
+                                            ],
+                                            spacing=8,
+                                        ),
+                                        ft.Divider(height=1, color=ft.Colors.ORANGE_200),
+                                        self.dropdown_atividade,
+                                        
+                                        ft.Container(height=15),
+                                        
+
+                                        ft.Row(
+                                            controls=[
+                                                ft.Icon(ft.Icons.CALENDAR_MONTH, size=22, color=ft.Colors.GREEN_700),
+                                                ft.Text(
+                                                    "Configuracao da Simulacao",
+                                                    size=18,
+                                                    weight=ft.FontWeight.BOLD,
+                                                    color=ft.Colors.BLUE_900,
+                                                ),
+                                            ],
+                                            spacing=8,
+                                        ),
+                                        ft.Divider(height=1, color=ft.Colors.GREEN_200),
+                                        self.txt_semanas,
+                                        
+                                        ft.Container(height=20),
+                                        
+
+                                        btn_validar,
+                                    ],
+                                    spacing=12,
+                                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                ),
+                                bgcolor=ft.Colors.WHITE,
+                                padding=30,
+                                border_radius=15,
+                                shadow=ft.BoxShadow(
+                                    spread_radius=1,
+                                    blur_radius=10,
+                                    color=ft.Colors.with_opacity(0.15, ft.Colors.BLACK),
+                                    offset=ft.Offset(0, 2),
+                                ),
+                                width=450,
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                scroll=ft.ScrollMode.AUTO,
+            ),
+            padding=30,
+            bgcolor=ft.Colors.GREY_50,
+            expand=True,
         )
 
         return ft.Tab(

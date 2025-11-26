@@ -11,6 +11,9 @@ _melhor_solucao_cache = {
     'peso_execucoes': 0  # Quantas execuções sem mudança
 }
 
+# Cache para armazenar histórico de dietas (máximo 10)
+_historico_dietas = []
+
 class IndividuoGenetico:
     """Representa um indivíduo da população no algoritmo genético"""
     def __init__(self, cromossomo: List[int], alimentos: List[AlimentoItem], meta_calorica: float):
@@ -164,15 +167,15 @@ def mochila_alimentos(alimentos: List[AlimentoItem], capacidade_calorica: float,
     """Otimiza a seleção de alimentos usando algoritmo genético com elitismo"""
     global _melhor_solucao_cache
     
-    # Variação mínima na capacidade calórica (reduzida para ±2 kcal)
+
     variacao = random.uniform(-2, 2)
     capacidade_calorica = max(1500, min(3500, capacidade_calorica + variacao))
     
     # ====== ALGORITMO GENÉTICO ======
     tamanho_populacao = 50
     geracoes = 30
-    taxa_mutacao = 0.08  # Reduzida de 0.15 para menos mudanças aleatórias
-    taxa_elitismo_ga = 0.15  # Aumentada de 0.1 para 15% (mantém mais elite)
+    taxa_mutacao = 0.08 
+    taxa_elitismo_ga = 0.15  
     
     # Inicializa população aleatória
     populacao = []
@@ -227,7 +230,6 @@ def mochila_alimentos(alimentos: List[AlimentoItem], capacidade_calorica: float,
         melhor_score = _melhor_solucao_cache['score']
         peso_execucoes = _melhor_solucao_cache['peso_execucoes']
         
-        # Probabilidade de manter a melhor solução (aumentada para 50-90%)
         prob_elite = min(0.90, 0.50 + (peso_execucoes * 0.20))
         
         # Se a solução atual é 2% pior, mantenha a anterior com muito alta probabilidade
@@ -252,14 +254,11 @@ def mochila_alimentos(alimentos: List[AlimentoItem], capacidade_calorica: float,
         _melhor_solucao_cache['calorias'] = calorias_total
         _melhor_solucao_cache['peso_execucoes'] = 0
     
-    # Ajuste fino de calorias se necessário
     calorias_total = sum(a.calorias for a in selecionados)
     if not (capacidade_calorica * 0.90 <= calorias_total <= capacidade_calorica * 1.10):
-        # Ajusta adicionando ou removendo alimentos
         alimentos_nao_selecionados = [a for a in alimentos if a not in selecionados]
         
         if calorias_total < capacidade_calorica * 0.90:
-            # Adiciona alimentos de menor caloria
             alimentos_nao_selecionados.sort(key=lambda x: x.calorias)
             for alimento in alimentos_nao_selecionados:
                 if calorias_total + alimento.calorias <= capacidade_calorica * 1.10:
@@ -269,26 +268,56 @@ def mochila_alimentos(alimentos: List[AlimentoItem], capacidade_calorica: float,
                     break
         
         elif calorias_total > capacidade_calorica * 1.10:
-            # Remove alimentos de maior caloria
             selecionados.sort(key=lambda x: x.calorias, reverse=True)
             while calorias_total > capacidade_calorica * 1.10 and len(selecionados) > 4:
                 removed = selecionados.pop(0)
                 calorias_total -= removed.calorias
     
+
+    calorias_final = sum(a.calorias for a in selecionados)
+    adicionar_dieta_historico(selecionados, calorias_final)
+    
     return selecionados
 
 def _torneio_selecao(populacao: List[IndividuoGenetico], tamanho_torneio: int = 3) -> IndividuoGenetico:
-    """Seleciona um indivíduo por torneio"""
     torneio = random.sample(populacao, min(tamanho_torneio, len(populacao)))
     return max(torneio, key=lambda x: x.fitness)
 
 
 def resetar_cache_elitismo():
-    """Reseta o cache de elitismo - útil para iniciar uma nova simulação"""
-    global _melhor_solucao_cache
+    global _melhor_solucao_cache, _historico_dietas
     _melhor_solucao_cache = {
         'alimentos': None,
         'score': -float('inf'),
         'calorias': 0,
         'peso_execucoes': 0
     }
+    _historico_dietas = []
+
+def obter_historico_dietas() -> List[dict]:
+
+    global _historico_dietas
+    return _historico_dietas.copy()
+
+def adicionar_dieta_historico(alimentos: List[AlimentoItem], calorias: float):
+
+    global _historico_dietas
+    
+
+    id_dieta = tuple(sorted([a.nome for a in alimentos]))
+    
+
+    for dieta in _historico_dietas:
+        if dieta['id'] == id_dieta:
+            return
+    
+
+    _historico_dietas.append({
+        'id': id_dieta,
+        'alimentos': alimentos.copy(),
+        'calorias': calorias
+    })
+    
+    # Manter apenas as 10 mais recentes
+    if len(_historico_dietas) > 10:
+        _historico_dietas.pop(0)

@@ -1,22 +1,10 @@
-"""
-Módulo de validações para a interface
-Centraliza todas as validações de dados do formulário
-"""
+
 
 class ValidadorDados:
     """Classe responsável por validar dados pessoais"""
     
     @staticmethod
     def validar_peso(peso_str: str) -> tuple[bool, str, float]:
-        """
-        Valida o peso informado
-        
-        Args:
-            peso_str: String com o valor do peso
-            
-        Returns:
-            tuple: (é_válido, mensagem_erro, valor_peso)
-        """
         try:
             peso = float(peso_str)
             if peso < 30 or peso > 300:
@@ -27,15 +15,6 @@ class ValidadorDados:
     
     @staticmethod
     def validar_altura(altura_str: str) -> tuple[bool, str, float]:
-        """
-        Valida a altura informada
-        
-        Args:
-            altura_str: String com o valor da altura
-            
-        Returns:
-            tuple: (é_válido, mensagem_erro, valor_altura)
-        """
         try:
             altura = float(altura_str)
             if altura < 1.0 or altura > 2.3:
@@ -46,15 +25,6 @@ class ValidadorDados:
     
     @staticmethod
     def validar_idade(idade_str: str) -> tuple[bool, str, int]:
-        """
-        Valida a idade informada
-        
-        Args:
-            idade_str: String com o valor da idade
-            
-        Returns:
-            tuple: (é_válido, mensagem_erro, valor_idade)
-        """
         try:
             idade = int(idade_str)
             if idade < 15 or idade > 120:
@@ -65,15 +35,6 @@ class ValidadorDados:
     
     @staticmethod
     def validar_sexo(sexo: str) -> tuple[bool, str]:
-        """
-        Valida o sexo informado
-        
-        Args:
-            sexo: String com o sexo (M ou F)
-            
-        Returns:
-            tuple: (é_válido, mensagem_erro)
-        """
         if not sexo:
             return False, "Selecione um sexo"
         if sexo.upper() not in ['M', 'F']:
@@ -82,15 +43,6 @@ class ValidadorDados:
     
     @staticmethod
     def validar_taxa_gordura(taxa_str: str) -> tuple[bool, str, float]:
-        """
-        Valida a taxa de gordura corporal informada
-        
-        Args:
-            taxa_str: String com o valor da taxa de gordura
-            
-        Returns:
-            tuple: (é_válido, mensagem_erro, valor_taxa)
-        """
         try:
             taxa = float(taxa_str)
             if taxa < 3 or taxa > 60:
@@ -101,15 +53,6 @@ class ValidadorDados:
     
     @staticmethod
     def validar_semanas(semanas_str: str) -> tuple[bool, str, int]:
-        """
-        Valida o número de semanas para simulação
-        
-        Args:
-            semanas_str: String com o número de semanas
-            
-        Returns:
-            tuple: (é_válido, mensagem_erro, valor_semanas)
-        """
         try:
             semanas = int(semanas_str)
             if semanas < 1 or semanas > 208:  # Até 4 anos
@@ -127,20 +70,6 @@ class ValidadorDados:
         taxa_gordura_str: str,
         semanas_str: str,
     ) -> tuple[bool, str, dict]:
-        """
-        Valida todos os dados de uma vez
-        
-        Args:
-            peso_str: Peso em kg
-            altura_str: Altura em metros
-            idade_str: Idade em anos
-            sexo: Sexo (M ou F)
-            taxa_gordura_str: Taxa de gordura em %
-            semanas_str: Número de semanas para simular
-            
-        Returns:
-            tuple: (é_válido, mensagem_erro, dicionário_dados)
-        """
         dados = {}
         mensagens_erro = []
         
@@ -193,12 +122,34 @@ class ValidadorDados:
         return True, "", dados
 
 
-class FormularioHelper:
-    """Classe auxiliar para formatação de mensagens de formulário"""
+class ValidadorTreino:
+    """Classe responsável por validar treinos personalizados"""
     
     @staticmethod
+    def validar_treino_personalizado(treino_personalizado: dict) -> tuple[bool, str]:
+
+        if len(treino_personalizado) != 7:
+            return False, "Configure todos os dias da semana (7 dias)"
+        
+
+        try:
+            from src.entities.treino import TipoTreino
+        except ImportError:
+            return False, "Erro ao importar tipos de treino"
+        
+
+        dias_repouso = sum(1 for tipo in treino_personalizado.values() if tipo == TipoTreino.REPOUSO)
+        
+        if dias_repouso == 0:
+            return False, "Deve ter pelo menos 1 dia de repouso na semana"
+        
+        return True, ""
+
+
+class FormularioHelper:
+
+    @staticmethod
     def formatar_mensagem_sucesso(dados: dict) -> str:
-        """Formata mensagem de sucesso com os dados validados"""
         return f"""Dados Validados com Sucesso!
 
 Calculo:
@@ -212,5 +163,4 @@ Proximo: Selecione uma Ficha de Treino"""
     
     @staticmethod
     def formatar_mensagem_erro(erros: str) -> str:
-        """Formata mensagem de erro"""
         return f"Erro na validacao:\n{erros}"
