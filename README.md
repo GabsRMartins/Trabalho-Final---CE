@@ -13,15 +13,18 @@ Este projeto implementa um simulador interativo de evolução corporal, aplicand
 🏋️‍♀️ Estruturas de Treino Adaptáveis: Suporte para múltiplas divisões de treino (ABC, ABCD, PPL - Push/Pull/Legs).
 ### 🚀 Como Executar
 
-#### Opção 1: Interface Gráfica (Recomendado)
-```bash
-python executar_interface.py
-```
+##  1 - Instalando as bibliotecas necessárias 
 
-#### Opção 2: Script Direto
-```bash
-python main.py
-```
+1 - Abrir um Terminal 
+
+2 - Ir Até o diretorió : Trabalho-Final---CE/
+
+3 - Executar o comando : pip install -r requirements.txt
+
+##  2 - Inicilizando a aplicação
+
+1 - Rodar o comando: python main.pu
+
 
 ### Características Principais
 
